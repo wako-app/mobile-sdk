@@ -1,0 +1,18 @@
+{
+  "$schema": "manifest-schema.json",
+  "version": "1.1.0",
+  "id": "plugin.my-plugin",
+  "name": "My First Plugin",
+  "description": "Will make your life better",
+  "author": "",
+  "actions": ["movies", "episodes"],
+  "entryPoint": "/plugin.js",
+  "languages": {
+    "en": "/i18n/en.json",
+    "fr": "/i18n/fr.json"
+  },
+  "changeLogs": {
+    "1.1.0": "Improve performance",
+    "1.0.0": "Initial Version"
+  }
+}

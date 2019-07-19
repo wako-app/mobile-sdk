@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "no-implicit-any": true,
+    "no-duplicate-variable": true,
+    "member-access": [true, "no-public"],
+    "prefer-const": true,
+    "quotemark": [true, "single"]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "name": "@wako-app/mobile-sdk",
+  "version": "1.0.0",
+  "description": "wako's mobile SDK",
+  "main": "dist/public_api.js",
+  "typings": "dist/public_api.d.ts",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wako-app/mobile-sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/wako-app/mobile-sdk/issues"
+  },
+  "homepage": "https://github.com/wako-app/mobile-sdk/issues#readme",
+  "scripts": {
+    "start": "tsc -w",
+    "lint": "tslint -p tsconfig.json",
+    "export-modules": "ts-node --project ./scripts/tsconfig.json ./scripts/export-all-module.ts",
+    "clean": "rm -rf dist",
+    "build:builders": "tsc -p builders/tsconfig.builders.json",
+    "copy:builders": "cp -r ./builders ./dist",
+    "build:lib": "tsc && node ./scripts/add-wako-in-plugin.js",
+    "build": "npm run export-modules && rm -rf dist && npm run build:lib && rm ./src/public_api.ts && cp ./src/manifest-schema.json ./dist",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "wako",
+    "sdk",
+    "mobile"
+  ],
+  "author": "wako",
+  "license": "MIT",
+  "dependencies": {
+    "@angular/common": "^7.2.15",
+    "@angular/core": "^7.2.15",
+    "@angular/forms": "^7.2.15",
+    "@angular/router": "^7.2.15",
+    "@ionic/angular": "^4.5.0",
+    "@ionic/storage": "^2.2.0",
+    "@ngx-translate/core": "^11.0.1",
+    "rxjs": "6.5.2",
+    "systemjs": "^4.0.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~0.13.8",
+    "@angular-devkit/core": "~7.3.8",
+    "@types/cordova": "0.0.34",
+    "@types/glob": "^7.1.1",
+    "@types/node": "^12.0.10",
+    "glob": "^7.1.4",
+    "husky": "^3.0.0",
+    "karma": "^4.1.0",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.1",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.4.5"
+  },
+  "peerDependencies": {
+    "@angular/common": "^7.2.15",
+    "@angular/core": "^7.2.15",
+    "@angular/forms": "^7.2.15",
+    "@angular/router": "^7.2.15",
+    "@ionic/angular": "^4.6.0",
+    "@ionic/storage": "^2.2.0",
+    "rxjs": "6.5.2",
+    "systemjs": "^4.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}

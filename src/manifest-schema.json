@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "WakoManifestSchema",
+  "title": "wako manifest Schema for validating manifest JSON.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Link to schema."
+    },
+    "version": {
+      "type": "string",
+      "description": "manifest Schema version."
+    },
+    "id": {
+      "type": "string",
+      "description": "unique plugin identifier"
+    },
+    "name": {
+      "type": "string",
+      "description": "Plugin's name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Plugin's description"
+    },
+    "author": {
+      "type": "string",
+      "description": "Plugin's author"
+    },
+    "actions": {
+      "type": "array",
+      "description": "Where the plugin will be used inside wako",
+      "items": {
+        "type": "string",
+        "enum": ["movies", "episodes"]
+      }
+    },
+    "entryPoint": {
+      "type": "string",
+      "description": "Plugin javascript file. Could be a absolute URL or a relative one base on the manifest URL"
+    },
+    "languages": {
+      "type": "object",
+      "description": "Plugin languages. "
+    },
+    "changeLogs": {
+      "type": "object",
+      "description": "Change logs. The key will be the version and the value the description"
+    }
+  },
+  "required": [
+    "version",
+    "id",
+    "name",
+    "description",
+    "actions",
+    "entryPoint",
+    "languages"
+  ]
+}
