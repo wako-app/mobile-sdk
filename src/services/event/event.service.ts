@@ -79,7 +79,7 @@ export interface EventChangeData {
 }
 
 export interface EventShowHistoryChangeData extends EventChangeData {
-  showImdbId: string;
+  showTraktId: number;
   showTitle: string;
   seasonNumber?: number;
   episodeNumber?: number;
