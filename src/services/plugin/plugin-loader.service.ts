@@ -274,4 +274,5 @@ export interface PluginManifest {
   actions: PluginAction[];
   entryPoint: string;
   languages: { [key: string]: string };
+  changeLogs?: { [key: string]: string };
 }
