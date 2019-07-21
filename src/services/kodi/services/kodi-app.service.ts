@@ -101,6 +101,8 @@ export class KodiAppService {
           this.openMedia$.next(openMedia);
         }
 
+        EventService.emit(EventCategory.kodi, EventName.open);
+
         return true;
       })
     );
@@ -122,6 +124,8 @@ export class KodiAppService {
         if (openMedia) {
           this.openMedia$.next(openMedia);
         }
+
+        EventService.emit(EventCategory.kodi, EventName.open);
 
         return true;
       })

@@ -57,7 +57,8 @@ export const EventCategory = {
   episodeHistory: 'EpisodeHistoryCategoryEvent',
   movie: 'MovieCategoryEvent',
   searchSource: 'SearchSource',
-  kodiRemote: 'KodiRemote'
+  kodiRemote: 'KodiRemote',
+  kodi: 'kodi'
 };
 
 export const EventName = {
