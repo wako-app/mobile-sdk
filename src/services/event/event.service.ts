@@ -78,9 +78,13 @@ export interface EventChangeData {
   callOrigin: string;
 }
 
-export interface EventShowHistoryChangeData extends EventChangeData {
+export interface EventShowChangeData extends EventChangeData {
   showTraktId: number;
   showTitle: string;
   seasonNumber?: number;
   episodeNumber?: number;
+}
+
+export interface EventMovieChangeData extends EventChangeData {
+  movieTraktId: number;
 }
