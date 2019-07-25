@@ -12,11 +12,20 @@ import {
 import { KodiPlayerGetAllActiveForm } from '../forms/player/kodi-player-get-all-active.form';
 import { KodiPlayerStopForm } from '../forms/player/kodi-player-stop.form';
 import { KodiExecuteAddonForm } from '../forms/addons/kodi-execute-addon.form';
+import { KodiPingForm } from '../forms/ping/kodi-ping.form';
 
 export class KodiAppService {
   static currentHost: KodiHostStructure;
 
+  /**
+   * If connected via websocket or if the host is reachable via HTTP
+   */
   static isConnected = false;
+
+  /**
+   * if connected via websocket
+   */
+  static isWsConnected = false;
 
   static wsConnection: WebSocket;
 
@@ -37,6 +46,7 @@ export class KodiAppService {
         wakoLog('mobile-sdk.KodiAppService::connected', connected);
 
         this.isConnected = connected;
+        this.isWsConnected = connected;
       });
   }
 
@@ -47,6 +57,11 @@ export class KodiAppService {
 
     this.wsConnection.onerror = error => {
       wakoLog('mobile-sdk.KodiAppService::onerror', error);
+
+      // Checks if the host is HTTP reachable
+      KodiPingForm.submit().subscribe(data => {
+        this.isConnected = data === 'pong';
+      });
     };
   }
 
