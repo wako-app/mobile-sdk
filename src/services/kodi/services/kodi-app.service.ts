@@ -13,6 +13,7 @@ import { KodiPlayerGetAllActiveForm } from '../forms/player/kodi-player-get-all-
 import { KodiPlayerStopForm } from '../forms/player/kodi-player-stop.form';
 import { KodiExecuteAddonForm } from '../forms/addons/kodi-execute-addon.form';
 import { KodiPingForm } from '../forms/ping/kodi-ping.form';
+import { KodiPlayerOpenPluginForm } from '../forms/player/kodi-player-open-plugin.form';
 
 export class KodiAppService {
   static currentHost: KodiHostStructure;
@@ -108,6 +109,24 @@ export class KodiAppService {
   static openUrl(url: string, openMedia?: OpenMedia, openKodiRemote = true) {
     return this.stopPlayingIfAny().pipe(
       switchMap(() => KodiPlayerOpenForm.submit(url)),
+      map(() => {
+        if (openKodiRemote) {
+          EventService.emit(EventCategory.kodiRemote, EventName.open);
+        }
+        if (openMedia) {
+          this.openMedia$.next(openMedia);
+        }
+
+        EventService.emit(EventCategory.kodi, EventName.open);
+
+        return true;
+      })
+    );
+  }
+
+  static openPlugin(url: string, openMedia?: OpenMedia, openKodiRemote = true) {
+    return this.stopPlayingIfAny().pipe(
+      switchMap(() => KodiPlayerOpenPluginForm.submit(url)),
       map(() => {
         if (openKodiRemote) {
           EventService.emit(EventCategory.kodiRemote, EventName.open);
