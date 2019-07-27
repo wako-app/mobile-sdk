@@ -5,7 +5,7 @@ export class KodiPlayerOpenForm {
     // Do not use websocket since it fails sometime, depending on the file url
     return KodiApiService.doHttpAction('Player.Open', {
       item: {
-        file: fileUrl
+        path: fileUrl
       }
     });
   }
