@@ -18,6 +18,10 @@ export class KodiWsService {
       config.wsPort ? config.wsPort : 9090
     }/jsonrpc`;
 
+    if (this.currentWebSocket) {
+      this.currentWebSocket.close();
+    }
+
     this.currentWebSocket = new WebSocket(apiBaseUrl);
 
     this.currentWebSocket.onopen = () => {
