@@ -1,12 +1,10 @@
 import { map } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { Storage } from '@ionic/storage';
+import { kodiConfig } from '../../config';
 
 export class WakoCacheService {
-  protected static storageEngine = new Storage({
-    name: 'wako_cache',
-    version: 1
-  });
+  protected static storageEngine = new Storage(kodiConfig.storageCache);
 
   private static serialize(data: any, expiresAt: number) {
     const d: CacheSerialized = {
