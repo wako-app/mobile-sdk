@@ -13,7 +13,10 @@
     "target": "es5",
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2018", "dom"],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "rxjs": ["./node_modules/rxjs"]
+    }
   },
   "include": ["src/**/*"]
 }
