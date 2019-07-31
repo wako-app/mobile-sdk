@@ -6,7 +6,7 @@ export const kodiConfig = {
     version: 1
   } as StorageConfig,
   storageCache: {
-    name: 'wako',
+    name: 'wako_cache',
     version: 1
   } as StorageConfig
 };
