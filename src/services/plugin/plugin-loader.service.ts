@@ -24,7 +24,6 @@ export class PluginLoaderService {
   private pluginModuleMap = new Map<string, PluginModuleMap>();
 
   constructor(
-    private translateService: TranslateService,
     private storage: Storage,
     private moduleLoader: ModuleLoaderService
   ) {}
@@ -138,8 +137,6 @@ export class PluginLoaderService {
   }
 
   loadAllInstalled(lang: string) {
-    this.translateService.use(lang);
-
     return from(this.getInstalledPluginIds()).pipe(
       switchMap(list => {
         const obss = [];
