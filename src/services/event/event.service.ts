@@ -63,11 +63,13 @@ export const EventCategory = {
 
 export const EventName = {
   addToHistory: 'addToHistory',
-  removeToHistory: 'removeToHistory',
+  removeFromHistory: 'removeFromHistory',
   addToWatchList: 'addToWatchList',
-  removeToWatchList: 'removeToWatchList',
+  removeFromWatchList: 'removeFromWatchList',
   addToCollection: 'addToCollection',
-  removeToCollection: 'removeToCollection',
+  removeFromCollection: 'removeFromCollection',
+  addToUserList: 'addToUserList',
+  removeFromUserList: 'removeFromUserList',
   searchFromOpenButton: 'searchFromOpenButton',
   searchFromSourceList: 'searchFromSourceList',
   open: 'open'
