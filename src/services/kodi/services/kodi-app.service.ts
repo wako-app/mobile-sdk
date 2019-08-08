@@ -250,6 +250,9 @@ export class KodiAppService {
           return timer(1000).pipe(mapTo(currentHost));
         }
 
+        // Connect anyway
+        this.connect();
+
         return of(currentHost);
       }),
       switchMap(() => {
