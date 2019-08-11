@@ -13,4 +13,5 @@ export class MovieItem {
     backdrop_original?: string;
   };
   certification: string;
+  genres: string[];
 }

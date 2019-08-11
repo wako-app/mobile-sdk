@@ -7,7 +7,6 @@ export class Movie extends MovieItem {
   runtime: number;
   trailer: string;
   language: string;
-  genres: string[];
   relatedIds: string[] = [];
   alternativeTitles?: { [key: string]: string };
   originalTitle: string;
