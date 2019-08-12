@@ -11,9 +11,7 @@ import {
 } from '../../event/event.service';
 import { KodiPlayerGetAllActiveForm } from '../forms/player/kodi-player-get-all-active.form';
 import { KodiPlayerStopForm } from '../forms/player/kodi-player-stop.form';
-import { KodiExecuteAddonForm } from '../forms/addons/kodi-execute-addon.form';
 import { KodiPingForm } from '../forms/ping/kodi-ping.form';
-import { KodiPlayerOpenPluginForm } from '../forms/player/kodi-player-open-plugin.form';
 import { Storage } from '@ionic/storage';
 import { kodiConfig } from '../../../config';
 
@@ -265,63 +263,31 @@ export class KodiAppService {
     );
   }
 
+  static open(item: object, openMedia?: OpenMedia, openKodiRemote = true) {
+    return this.stopPlayingIfAny().pipe(
+      switchMap(() => KodiPlayerOpenForm.submit(item)),
+      map(() => {
+        if (openKodiRemote) {
+          EventService.emit(EventCategory.kodiRemote, EventName.open);
+        }
+        if (openMedia) {
+          this.openMedia$.next(openMedia);
+        }
+
+        EventService.emit(EventCategory.kodi, EventName.open);
+
+        return true;
+      })
+    );
+  }
+
   static openUrl(url: string, openMedia?: OpenMedia, openKodiRemote = true) {
-    return this.stopPlayingIfAny().pipe(
-      switchMap(() => KodiPlayerOpenForm.submit(url)),
-      map(() => {
-        if (openKodiRemote) {
-          EventService.emit(EventCategory.kodiRemote, EventName.open);
-        }
-        if (openMedia) {
-          this.openMedia$.next(openMedia);
-        }
-
-        EventService.emit(EventCategory.kodi, EventName.open);
-
-        return true;
-      })
-    );
-  }
-
-  static openPlugin(url: string, openMedia?: OpenMedia, openKodiRemote = true) {
-    return this.stopPlayingIfAny().pipe(
-      switchMap(() => KodiPlayerOpenPluginForm.submit(url)),
-      map(() => {
-        if (openKodiRemote) {
-          EventService.emit(EventCategory.kodiRemote, EventName.open);
-        }
-        if (openMedia) {
-          this.openMedia$.next(openMedia);
-        }
-
-        EventService.emit(EventCategory.kodi, EventName.open);
-
-        return true;
-      })
-    );
-  }
-
-  static excuteAddon(
-    addonId: string,
-    params: string,
-    openMedia?: OpenMedia,
-    openKodiRemote = true
-  ) {
-    return this.stopPlayingIfAny().pipe(
-      switchMap(() => KodiExecuteAddonForm.submit(addonId, params)),
-      map(() => {
-        if (openKodiRemote) {
-          EventService.emit(EventCategory.kodiRemote, EventName.open);
-        }
-
-        if (openMedia) {
-          this.openMedia$.next(openMedia);
-        }
-
-        EventService.emit(EventCategory.kodi, EventName.open);
-
-        return true;
-      })
+    return this.open(
+      {
+        file: url
+      },
+      openMedia,
+      openKodiRemote
     );
   }
 
