@@ -3,7 +3,7 @@ export function getDomainFromUrl(url: string) {
 }
 
 export function wakoLog(category: string, data: any) {
-  console.log(`${new Date().toISOString()} - [${category}]:`, ...data);
+  console.log(`${new Date().toISOString()} - [${category}]:`, data);
 }
 
 export function escapeText(text: string) {
