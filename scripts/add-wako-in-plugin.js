@@ -13,6 +13,10 @@ file1 = file1.replace(
   `var ionic = require('@ionic/angular');\nvar wakoAppMobileSdk = require('@wako-app/mobile-sdk');`
 );
 
+file1 = file1.replace(
+  `import * as ionic from '@ionic/angular';`,
+  `import * as ionic from '@ionic/angular';\nimport * as wakoAppMobileSdk from '@wako-app/mobile-sdk';`
+);
 fs.writeFileSync(file, file1);
 
 console.log('Patch ' + file + ' DONE');
