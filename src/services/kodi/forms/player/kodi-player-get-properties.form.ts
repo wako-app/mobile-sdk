@@ -10,7 +10,10 @@ export class KodiPlayerGetPropertiesForm {
       'totaltime',
       'time',
       'subtitleenabled',
-      'subtitles'
+      'subtitles',
+      'currentsubtitle',
+      'currentaudiostream',
+      'audiostreams'
     ]
   ) {
     return KodiApiService.doHttpAction<any>('Player.GetProperties', {
