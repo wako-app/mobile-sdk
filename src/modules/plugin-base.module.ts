@@ -3,6 +3,8 @@ export abstract class PluginBaseModule {
 
   static episodeComponent?: any;
 
+  static episodeItemOptionComponent?: any;
+
   static settingsComponent?: any;
 
   static pluginDetailComponent?: any;

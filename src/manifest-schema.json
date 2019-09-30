@@ -33,7 +33,7 @@
       "description": "Where the plugin will be used inside wako",
       "items": {
         "type": "string",
-        "enum": ["movies", "episodes"]
+        "enum": ["movies", "episodes", "episodes-item-option"]
       }
     },
     "entryPoint": {

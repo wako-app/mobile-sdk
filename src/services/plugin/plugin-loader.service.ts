@@ -7,7 +7,6 @@ import {
 
 import { first, switchMap, tap } from 'rxjs/operators';
 import { forkJoin, from, of, ReplaySubject } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 
 import { Storage } from '@ionic/storage';
 
@@ -16,6 +15,7 @@ import { WakoBaseHttpService } from '../http/wako-base-http.service';
 import { PluginBaseService } from './plugin-base.service';
 import { MovieDetailBaseComponent } from '../../components/movie-detail-base.component';
 import { EpisodeDetailBaseComponent } from '../../components/episode-detail-base.component';
+import { EpisodeItemOptionBaseComponent } from '../../components/episode-item-option-base.component';
 
 @Injectable()
 export class PluginLoaderService {
@@ -236,6 +236,19 @@ export class PluginLoaderService {
             any
           >(moduleType.pluginDetailComponent);
           viewContainerRef.createComponent<any>(compFactory);
+        } else if (
+          action === 'episodes-item-option' &&
+          pluginMap.pluginDetail.manifest.actions.includes(action) &&
+          moduleType.episodeItemOptionComponent
+        ) {
+          const compFactory = moduleRef.componentFactoryResolver.resolveComponentFactory<
+            EpisodeItemOptionBaseComponent
+          >(moduleType.episodeItemOptionComponent);
+          const episodeComponent = viewContainerRef.createComponent<
+            EpisodeItemOptionBaseComponent
+          >(compFactory);
+
+          episodeComponent.instance.setShowEpisode(data.show, data.episode);
         }
       });
     });
@@ -246,7 +259,8 @@ export declare type PluginAction =
   | 'movies'
   | 'episodes'
   | 'plugin-detail'
-  | 'settings';
+  | 'settings'
+  | 'episodes-item-option';
 
 export interface PluginModuleMap {
   pluginDetail: PluginDetail;
