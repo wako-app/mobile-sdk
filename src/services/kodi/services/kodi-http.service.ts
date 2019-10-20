@@ -40,7 +40,7 @@ export class KodiHttpService extends WakoBaseHttpService {
   static doAction<T>(
     method: string,
     params?: any,
-    timeoutMs = 2000
+    timeoutMs = 10000
   ): Observable<T> {
     const action: KodiAction = {
       jsonrpc: '2.0',
