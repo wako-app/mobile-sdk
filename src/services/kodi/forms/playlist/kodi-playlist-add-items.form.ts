@@ -5,7 +5,8 @@ export class KodiPlaylistAddItemsForm {
     return KodiApiService.doHttpAction<{
       items: { label: string; type: string }[];
     }>('Playlist.Add', {
-      playlistid: playListId
+      playlistid: playListId,
+      items: items
     });
   }
 }
