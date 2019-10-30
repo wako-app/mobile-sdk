@@ -7,10 +7,13 @@ declare const cordova: any;
 export class WakoHttpService {
   static isMobileDevice: boolean;
 
-  static request(httpRequest: WakoHttpRequest): Observable<WakoHttpResponse> {
+  static request(
+    httpRequest: WakoHttpRequest,
+    byPassCors = true
+  ): Observable<WakoHttpResponse> {
     let obs: Observable<WakoHttpResponse>;
 
-    if (this.isMobileDevice) {
+    if (this.isMobileDevice && byPassCors) {
       obs = this.mobileRequest(httpRequest).pipe(
         catchError(err => {
           if (err instanceof WakoHttpError && err.status === 301) {

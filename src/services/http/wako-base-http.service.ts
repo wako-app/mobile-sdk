@@ -35,6 +35,8 @@ export abstract class WakoBaseHttpService {
 
   static handleError = null;
 
+  static byPassCors = true;
+
   private static getQueueItemsByDomain(domain): QueueItem[] {
     if (!this.domainQueueItems.has(domain)) {
       this.domainQueueItems.set(domain, []);
@@ -110,7 +112,7 @@ export abstract class WakoBaseHttpService {
     httpRequest: WakoHttpRequest,
     cacheTime?: string | number,
     timeoutMs = 10000,
-    byPassCors = false,
+    byPassCors = null,
     timeToWaitOnTooManyRequest?: number,
     timeToWaitBetweenEachRequest?: number
   ): Observable<T> {
@@ -151,7 +153,10 @@ export abstract class WakoBaseHttpService {
             return;
           }
 
-          const queueObs = WakoHttpService.request(httpRequest).pipe(
+          const queueObs = WakoHttpService.request(
+            httpRequest,
+            byPassCors !== null ? byPassCors : this.byPassCors
+          ).pipe(
             timeout(timeoutMs),
             map((response: WakoHttpResponse) => {
               if (cacheTime) {
