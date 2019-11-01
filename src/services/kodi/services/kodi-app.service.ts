@@ -311,6 +311,8 @@ export interface OpenMedia {
   showTraktId?: number;
   seasonNumber?: number;
   episodeNumber?: number;
+  videoUrl?: string;
+  nextVideoUrls?: string[];
 }
 
 export interface KodiConnected {
