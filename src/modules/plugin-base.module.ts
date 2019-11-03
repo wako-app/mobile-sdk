@@ -5,6 +5,8 @@ export abstract class PluginBaseModule {
 
   static episodeItemOptionComponent?: any;
 
+  static showComponent?: any;
+
   static settingsComponent?: any;
 
   static pluginDetailComponent?: any;

@@ -16,6 +16,7 @@ import { PluginBaseService } from './plugin-base.service';
 import { MovieDetailBaseComponent } from '../../components/movie-detail-base.component';
 import { EpisodeDetailBaseComponent } from '../../components/episode-detail-base.component';
 import { EpisodeItemOptionBaseComponent } from '../../components/episode-item-option-base.component';
+import { ShowDetailBaseComponent } from '../../components/show-detail-base.component';
 
 @Injectable()
 export class PluginLoaderService {
@@ -249,6 +250,19 @@ export class PluginLoaderService {
           >(compFactory);
 
           episodeComponent.instance.setShowEpisode(data.show, data.episode);
+        } else if (
+          action === 'shows' &&
+          pluginMap.pluginDetail.manifest.actions.includes(action) &&
+          moduleType.showComponent
+        ) {
+          const compFactory = moduleRef.componentFactoryResolver.resolveComponentFactory<
+            ShowDetailBaseComponent
+          >(moduleType.showComponent);
+          const episodeComponent = viewContainerRef.createComponent<
+            ShowDetailBaseComponent
+          >(compFactory);
+
+          episodeComponent.instance.setShow(data.show);
         }
       });
     });
@@ -260,7 +274,8 @@ export declare type PluginAction =
   | 'episodes'
   | 'plugin-detail'
   | 'settings'
-  | 'episodes-item-option';
+  | 'episodes-item-option'
+  | 'shows';
 
 export interface PluginModuleMap {
   pluginDetail: PluginDetail;
