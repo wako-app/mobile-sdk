@@ -13,6 +13,8 @@ export class BrowserService {
       return;
     }
 
+    const isDarkMode = document.body.classList.contains('dark');
+
     SafariViewController.isAvailable(available => {
       if (available) {
         SafariViewController.show({
@@ -21,8 +23,8 @@ export class BrowserService {
           animated: true,
           transition: 'curl',
           enterReaderModeIfAvailable: false,
-          barColor: '#1f2d3f',
-          tintColor: '#1f2d3f',
+          barColor: isDarkMode ? '#000000' : '#1f2d3f',
+          tintColor: isDarkMode ? '#000000' : '#1f2d3f',
           controlTintColor: '#ffffff'
         });
       } else {
