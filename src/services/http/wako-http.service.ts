@@ -50,7 +50,7 @@ export class WakoHttpService {
 
       let serializer = 'json';
       if (contentType) {
-        // This has been added to handle real debrid weird form. But it should be generic to handle all case
+        // This has been added to handle weird form. But it should be generic to handle all case
         httpRequest.headers['content-type'] =
           httpRequest.headers['Content-Type'];
 
@@ -86,12 +86,22 @@ export class WakoHttpService {
         };
 
         const failure = (response: CordovaHttpFailure) => {
+          let error = response.error;
+          try {
+            error =
+              httpRequest.responseType === 'json'
+                ? JSON.parse(response.error)
+                : response.error;
+          } catch (e) {
+            error = response.error;
+          }
+
           reject(
             new WakoHttpError(
               httpRequest,
               response.status,
               httpRequest.responseType,
-              response.error
+              error
             )
           );
         };
