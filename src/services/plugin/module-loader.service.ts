@@ -1,4 +1,9 @@
-import { Injectable, Injector, NgModuleFactory } from '@angular/core';
+import {
+  Injectable,
+  Injector,
+  NgModuleFactory,
+  NgModuleRef
+} from '@angular/core';
 import { PLUGIN_EXTERNALS_MAP } from './plugin-externals';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -51,13 +56,9 @@ export class ModuleLoaderService {
     moduleFactory: NgModuleFactory<any>,
     isFirstLoad: boolean
   ) {
-    const moduleType = moduleFactory.moduleType as any;
-
     const moduleRef = moduleFactory.create(this.injector);
 
-    const pluginService = moduleRef.injector.get(
-      moduleType.pluginService
-    ) as PluginBaseService;
+    const pluginService = this.getPluginService(moduleRef, moduleFactory);
 
     pluginService.initialize();
 
@@ -66,5 +67,15 @@ export class ModuleLoaderService {
     }
 
     return { moduleFactory, moduleRef };
+  }
+
+  getPluginService(
+    moduleRef: NgModuleRef<any>,
+    moduleFactory: NgModuleFactory<any>
+  ) {
+    const moduleType = moduleFactory.moduleType as any;
+    return moduleRef.injector.get(
+      moduleType.pluginService
+    ) as PluginBaseService;
   }
 }

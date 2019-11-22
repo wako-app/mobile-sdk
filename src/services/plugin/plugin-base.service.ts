@@ -16,4 +16,9 @@ export abstract class PluginBaseService {
    * Called once, after the plugin has been installed
    */
   abstract afterInstall();
+
+  /**
+   * Custom action to be called from outside
+   */
+  abstract customAction(action: string, data: any);
 }

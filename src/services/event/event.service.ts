@@ -58,7 +58,8 @@ export const EventCategory = {
   movie: 'MovieCategoryEvent',
   searchSource: 'SearchSource',
   kodiRemote: 'KodiRemote',
-  kodi: 'kodi'
+  kodi: 'kodi',
+  playlist: 'playlist'
 };
 
 export const EventName = {
@@ -72,7 +73,8 @@ export const EventName = {
   removeFromUserList: 'removeFromUserList',
   searchFromOpenButton: 'searchFromOpenButton',
   searchFromSourceList: 'searchFromSourceList',
-  open: 'open'
+  open: 'open',
+  change: 'change'
 };
 
 export interface EventChangeData {
