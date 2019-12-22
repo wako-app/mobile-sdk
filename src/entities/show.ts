@@ -31,4 +31,5 @@ export class Show {
   alternativeTitles?: { [key: string]: string };
   originalTitle: string;
   status: ShowStatus;
+  network: string;
 }
