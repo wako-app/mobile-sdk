@@ -1,6 +1,7 @@
 export class Episode {
   traktSeasonNumber: number;
   traktNumber: number;
+  absoluteNumber: number;
   code: string;
   title: string;
   imdbId: string;

@@ -1,5 +1,7 @@
 import { Season } from './season';
 
+export declare type ShowStatus = 'ended' | 'canceled' | 'returning series';
+
 export class Show {
   title: string;
   year: number;
@@ -28,4 +30,5 @@ export class Show {
   seasons?: Season[];
   alternativeTitles?: { [key: string]: string };
   originalTitle: string;
+  status: ShowStatus;
 }

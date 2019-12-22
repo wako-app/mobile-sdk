@@ -1,6 +1,19 @@
-import { MovieItem } from './movie-item';
-
-export class Movie extends MovieItem {
+export class Movie {
+  title: string;
+  year: number;
+  imdbId: string;
+  traktId: number;
+  tmdbId?: number;
+  rating: number;
+  votes: number;
+  images_url?: {
+    poster?: string;
+    backdrop?: string;
+    poster_original?: string;
+    backdrop_original?: string;
+  };
+  certification: string;
+  genres: string[];
   tagline?: string;
   overview: string;
   released?: string;
@@ -10,4 +23,5 @@ export class Movie extends MovieItem {
   relatedIds: string[] = [];
   alternativeTitles?: { [key: string]: string };
   originalTitle: string;
+  status: string;
 }
