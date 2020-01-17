@@ -9,7 +9,7 @@ export class Episode {
   tvdbId: number;
   traktId: number;
   overview: string;
-  firstAired: Date;
+  firstAired: string;
   rating: number;
   votes: number;
   runtime: number;
