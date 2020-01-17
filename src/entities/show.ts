@@ -1,6 +1,6 @@
-import { Season } from './season';
+import { Season } from "./season";
 
-export declare type ShowStatus = 'ended' | 'canceled' | 'returning series';
+export declare type ShowStatus = "ended" | "canceled" | "returning series";
 
 export class Show {
   title: string;
@@ -11,7 +11,7 @@ export class Show {
   traktId: number;
   slug: string;
   overview: string;
-  firstAired: Date;
+  firstAired: string;
   runtime: number;
   rating: number;
   votes: number;

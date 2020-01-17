@@ -1,4 +1,4 @@
-import { Episode } from './episode';
+import { Episode } from "./episode";
 
 export class Season {
   traktNumber: number;
@@ -9,7 +9,7 @@ export class Season {
   tmdbId: number;
   tvdbId: number;
   overview: string;
-  firstAired: Date;
+  firstAired: string;
   network: string;
   rating: number;
   votes: number;
@@ -17,5 +17,5 @@ export class Season {
   episodeCount: number;
   episodes: Episode[];
   totalEpisodesWatched: number;
-  status: 'completed' | 'waiting for new episode' | 'in progress';
+  status: "completed" | "waiting for new episode" | "in progress";
 }
