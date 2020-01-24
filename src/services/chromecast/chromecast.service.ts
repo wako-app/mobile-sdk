@@ -239,7 +239,7 @@ export class ChromecastService {
       contentType
     );
 
-    mediaInfo.customData = customData;
+    mediaInfo.customData = customData || {};
 
     if (openMedia) {
       mediaInfo.customData['openMedia'] = openMedia;
