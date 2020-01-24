@@ -1,4 +1,4 @@
-import { Observable, ReplaySubject, Subject, throwError } from 'rxjs';
+import { Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { first, switchMap } from 'rxjs/operators';
 import { OpenMedia } from '../kodi/services/kodi-app.service';
 
@@ -148,8 +148,7 @@ export class ChromecastService {
     }
 
     if (this.session) {
-      this.leave();
-      // return of(true);
+      return of(true);
     }
 
     console.log('CAST', 'Called requestSession');
