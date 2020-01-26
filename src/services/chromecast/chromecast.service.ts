@@ -322,8 +322,8 @@ export class ChromecastService {
               url,
               poster,
               openMedia,
-              customData,
               contentType,
+              customData,
               metadata
             );
           })
