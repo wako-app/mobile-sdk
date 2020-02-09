@@ -1,6 +1,6 @@
 {
   "name": "@wako-app/mobile-sdk",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "wako's mobile SDK",
   "main": "dist/public_api.js",
   "typings": "dist/public_api.d.ts",
@@ -38,9 +38,9 @@
     "@angular/router": "^8.2.14",
     "@ionic/angular": "^4.7.1",
     "@ionic/storage": "^2.2.0",
-    "@ngx-translate/core": "^11.0.1",
+    "@ngx-translate/core": "^12.0.0",
     "rxjs": "6.5.4",
-    "systemjs": "^6.1.10"
+    "systemjs": "^6.2.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.23",
@@ -58,10 +58,11 @@
     "typescript": "^3.4.5"
   },
   "peerDependencies": {
-    "@ionic/angular": "^4.11.8",
+    "@ionic/angular": "^4.11.10",
     "@ionic/storage": "^2.2.0",
+    "@ngx-translate/core": "^12.0.0",
     "rxjs": "6.5.4",
-    "systemjs": "^6.1.10"
+    "systemjs": "^6.2.2"
   },
   "husky": {
     "hooks": {
