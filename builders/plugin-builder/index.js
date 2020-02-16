@@ -6,6 +6,17 @@ const fs = require('fs');
 const operators_1 = require('rxjs/operators');
 let entryPointPath;
 function buildPlugin(options, context, transforms = {}) {
+  if (!context.getProjectMetadata) {
+    context.getProjectMetadata = () => {
+      return Promise.resolve({
+        root: 'projects/plugin/',
+        sourceRoot: 'projects/plugin/src',
+        prefix: 'app',
+        projectType: 'application',
+        schematics: {}
+      });
+    };
+  }
   options.deleteOutputPath = false;
   const originalWebpackConfigurationFn = transforms.webpackConfiguration;
   transforms.webpackConfiguration = config => {

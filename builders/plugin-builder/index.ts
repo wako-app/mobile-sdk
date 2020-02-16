@@ -19,6 +19,18 @@ function buildPlugin(
     webpackConfiguration?: ExecutionTransformer<webpack.Configuration>;
   } = {}
 ): Observable<BrowserBuilderOutput> {
+  if (!context.getProjectMetadata) {
+    context.getProjectMetadata = () => {
+      return Promise.resolve({
+        root: 'projects/plugin/',
+        sourceRoot: 'projects/plugin/src',
+        prefix: 'app',
+        projectType: 'application',
+        schematics: {}
+      });
+    };
+  }
+
   options.deleteOutputPath = false;
 
   const originalWebpackConfigurationFn = transforms.webpackConfiguration;
