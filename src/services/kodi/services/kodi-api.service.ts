@@ -1,7 +1,7 @@
-import { KodiHostStructure } from '../structures/kodi-host.structure';
-import { KodiHttpService } from './kodi-http.service';
-import { map, tap } from 'rxjs/operators';
-import { KodiWsService } from './kodi-ws.service';
+import { KodiHostStructure } from "../structures/kodi-host.structure";
+import { KodiHttpService } from "./kodi-http.service";
+import { map, tap } from "rxjs/operators";
+import { KodiWsService } from "./kodi-ws.service";
 
 export class KodiApiService extends KodiWsService {
   static host: KodiHostStructure;
@@ -21,8 +21,8 @@ export class KodiApiService extends KodiWsService {
     return super.disconnect();
   }
 
-  static doHttpAction<T>(method: string, params?: any) {
-    return KodiHttpService.doAction<T>(method, params);
+  static doHttpAction<T>(method: string, params?: any, timeoutMs = 10000) {
+    return KodiHttpService.doAction<T>(method, params, timeoutMs);
   }
 
   static doAction<T>(method: string, params?: any) {
@@ -32,12 +32,12 @@ export class KodiApiService extends KodiWsService {
       // Use HTTP method
       obs = KodiHttpService.doAction<T>(method, params);
     } else {
-      obs = super.send(method, params).pipe(map(data => data.result as T));
+      obs = super.send(method, params).pipe(map((data) => data.result as T));
     }
 
     return obs.pipe(
-      tap(data => {
-        console.log('method', method, data);
+      tap((data) => {
+        console.log("method", method, data);
       })
     );
   }

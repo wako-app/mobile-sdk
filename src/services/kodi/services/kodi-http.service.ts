@@ -1,11 +1,11 @@
-import { KodiHostStructure } from '../structures/kodi-host.structure';
-import { map } from 'rxjs/operators';
-import { NEVER, Observable } from 'rxjs';
-import { KodiBaseDto } from '../dtos/kodi-base-dto';
-import { WakoBaseHttpService } from '../../http/wako-base-http.service';
+import { KodiHostStructure } from "../structures/kodi-host.structure";
+import { map } from "rxjs/operators";
+import { Observable, throwError } from "rxjs";
+import { KodiBaseDto } from "../dtos/kodi-base-dto";
+import { WakoBaseHttpService } from "../../http/wako-base-http.service";
 
 export class KodiHttpService extends WakoBaseHttpService {
-  private static apiBaseUrl = '';
+  private static apiBaseUrl = "";
 
   static host: KodiHostStructure;
 
@@ -16,8 +16,8 @@ export class KodiHttpService extends WakoBaseHttpService {
   }
 
   static handleError(err) {
-    console.log('Error on kodi', err);
-    return NEVER;
+    console.log("Error on kodi", err);
+    return throwError(err);
   }
 
   static setHost(host: KodiHostStructure) {
@@ -27,11 +27,11 @@ export class KodiHttpService extends WakoBaseHttpService {
 
   static getHeaders() {
     const headers = {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     };
     if (this.host && this.host.login) {
-      headers['Authorization'] = `Basic ${btoa(
-        this.host.login + ':' + this.host.password
+      headers["Authorization"] = `Basic ${btoa(
+        this.host.login + ":" + this.host.password
       )}`;
     }
     return headers;
@@ -43,9 +43,9 @@ export class KodiHttpService extends WakoBaseHttpService {
     timeoutMs = 10000
   ): Observable<T> {
     const action: KodiAction = {
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       id: 1,
-      method: method
+      method: method,
     };
 
     if (params) {
@@ -56,7 +56,7 @@ export class KodiHttpService extends WakoBaseHttpService {
       action,
       null,
       timeoutMs
-    ).pipe(map(data => data.result));
+    ).pipe(map((data) => data.result));
   }
 }
 

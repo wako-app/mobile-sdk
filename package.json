@@ -1,6 +1,6 @@
 {
   "name": "@wako-app/mobile-sdk",
-  "version": "2.2.8",
+  "version": "2.3.0",
   "description": "wako's mobile SDK",
   "main": "dist/public_api.js",
   "typings": "dist/public_api.d.ts",
@@ -36,10 +36,10 @@
     "@angular/core": "^8.2.14",
     "@angular/forms": "^8.2.14",
     "@angular/router": "^8.2.14",
-    "@ionic/angular": "^5.0.0",
+    "@ionic/angular": "^5.0.7",
     "@ionic/storage": "^2.2.0",
-    "@ngx-translate/core": "^12.0.0",
-    "rxjs": "6.5.4",
+    "@ngx-translate/core": "^12.1.2",
+    "rxjs": "6.5.5",
     "systemjs": "^6.2.2"
   },
   "devDependencies": {
@@ -49,19 +49,19 @@
     "@types/glob": "^7.1.1",
     "@types/node": "^12.0.10",
     "glob": "^7.1.4",
-    "husky": "^4.2.1",
+    "husky": "^4.2.3",
     "karma": "^4.1.0",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.2",
     "pretty-quick": "^2.0.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
     "typescript": "^3.4.5"
   },
   "peerDependencies": {
-    "@ionic/angular": "^5.0.0",
+    "@ionic/angular": "^5.0.7",
     "@ionic/storage": "^2.2.0",
-    "@ngx-translate/core": "^12.0.0",
-    "rxjs": "6.5.4",
+    "@ngx-translate/core": "^12.1.2",
+    "rxjs": "6.5.5",
     "systemjs": "^6.2.2"
   },
   "husky": {

@@ -5,4 +5,5 @@ export interface KodiHostStructure {
   wsPort?: number;
   login?: string;
   password?: string;
+  uuid?: string;
 }
