@@ -55,7 +55,7 @@
     "name",
     "description",
     "actions",
-    "entryPoint",
+    "entryPointV2",
     "languages"
   ]
 }

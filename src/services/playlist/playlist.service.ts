@@ -1,13 +1,29 @@
-import { Injectable } from '@angular/core';
-import { Playlist } from '../../entities/playlist';
-import { Storage } from '@ionic/storage';
-import { PlaylistVideo } from '../../entities/playlist-video';
+import { Playlist } from "../../entities/playlist";
+import { Storage } from "@ionic/storage";
+import { PlaylistVideo } from "../../entities/playlist-video";
 
-@Injectable()
 export class PlaylistService {
-  private storageKey = 'wako_playlist_items';
+  private storageKey = "wako_playlist_items";
 
-  constructor(private storage: Storage) {}
+  private static instance: PlaylistService;
+
+  private constructor(private storage: Storage) {}
+
+  static initialize(storage: Storage) {
+    if (this.instance) {
+      return;
+    }
+
+    this.instance = new this(storage);
+  }
+
+  static getInstance() {
+    if (!this.instance) {
+      throw new Error("PlaylistService has not been initialize");
+    }
+
+    return this.instance;
+  }
 
   private async getPlaylistsFromStorage() {
     const playlists = (await this.storage.get(this.storageKey)) as Playlist[];
@@ -26,7 +42,7 @@ export class PlaylistService {
     const playlists = await this.getPlaylistsFromStorage();
 
     const newPlaylists: Playlist[] = [];
-    playlists.forEach(item => {
+    playlists.forEach((item) => {
       if (item.id !== id) {
         newPlaylists.push(item);
       }
@@ -37,7 +53,7 @@ export class PlaylistService {
 
   async get(id: string) {
     const playlists = await this.getPlaylistsFromStorage();
-    return playlists.find(playlist => playlist.id === id);
+    return playlists.find((playlist) => playlist.id === id);
   }
 
   async addOrUpdate(playlist: Playlist) {
@@ -52,7 +68,7 @@ export class PlaylistService {
 
   async addPlaylistItems(id: string, playlistVideos: PlaylistVideo[]) {
     const playlists = await this.getPlaylistsFromStorage();
-    const playlist = playlists.find(item => item.id === id);
+    const playlist = playlists.find((item) => item.id === id);
 
     if (playlist) {
       playlist.updatedAt = new Date().toISOString();
@@ -63,7 +79,7 @@ export class PlaylistService {
 
   async deletePlaylistItem(id: string, itemIndex: number) {
     const playlists = await this.getPlaylistsFromStorage();
-    const playlist = playlists.find(item => item.id === id);
+    const playlist = playlists.find((item) => item.id === id);
 
     if (playlist) {
       const newItems = [];

@@ -1,6 +1,6 @@
 {
   "name": "@wako-app/mobile-sdk",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "wako's mobile SDK",
   "main": "dist/public_api.js",
   "typings": "dist/public_api.d.ts",
@@ -32,37 +32,39 @@
   "author": "wako",
   "license": "MIT",
   "dependencies": {
-    "@angular/common": "^8.2.14",
-    "@angular/core": "^8.2.14",
-    "@angular/forms": "^8.2.14",
-    "@angular/router": "^8.2.14",
+    "@angular/common": "^9.1.1",
+    "@angular/core": "^9.1.1",
+    "@angular/forms": "^9.1.1",
+    "@angular/router": "^9.1.1",
     "@ionic/angular": "^5.0.7",
     "@ionic/storage": "^2.2.0",
     "@ngx-translate/core": "^12.1.2",
     "rxjs": "6.5.5",
-    "systemjs": "^6.2.2"
+    "systemjs": "^6.3.0",
+    "tslib": "^1.11.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^0.803.25",
-    "@angular-devkit/core": "^8.3.23",
+    "@angular-devkit/build-angular": "~0.901.1",
+    "@angular-devkit/core": "^9.1.1",
     "@types/cordova": "0.0.34",
     "@types/glob": "^7.1.1",
     "@types/node": "^12.0.10",
     "glob": "^7.1.4",
-    "husky": "^4.2.3",
+    "husky": "^4.2.5",
     "karma": "^4.1.0",
-    "prettier": "^2.0.2",
+    "prettier": "^2.0.4",
     "pretty-quick": "^2.0.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.4.5"
+    "typescript": "~3.8.3"
   },
   "peerDependencies": {
     "@ionic/angular": "^5.0.7",
     "@ionic/storage": "^2.2.0",
     "@ngx-translate/core": "^12.1.2",
     "rxjs": "6.5.5",
-    "systemjs": "^6.2.2"
+    "systemjs": "^6.3.0",
+    "tslib": "^1.11.1"
   },
   "husky": {
     "hooks": {
