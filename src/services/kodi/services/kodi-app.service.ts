@@ -1,23 +1,43 @@
-import { of, ReplaySubject, throwError, timer } from 'rxjs';
-import { distinctUntilChanged, map, mapTo, switchMap } from 'rxjs/operators';
-import { wakoLog } from '../../../tools/utils.tool';
-import { KodiHostStructure } from '../structures/kodi-host.structure';
-import { KodiApiService } from './kodi-api.service';
-import { KodiPlayerOpenForm } from '../forms/player/kodi-player-open.form';
+import {
+  concat,
+  from,
+  Observable,
+  of,
+  ReplaySubject,
+  Subject,
+  throwError,
+  timer,
+} from "rxjs";
+import {
+  distinctUntilChanged,
+  map,
+  mapTo,
+  switchMap,
+  takeUntil,
+} from "rxjs/operators";
+import { wakoLog } from "../../../tools/utils.tool";
+import { KodiHostStructure } from "../structures/kodi-host.structure";
+import { KodiApiService } from "./kodi-api.service";
+import { KodiPlayerOpenForm } from "../forms/player/kodi-player-open.form";
 import {
   EventCategory,
   EventName,
-  EventService
-} from '../../event/event.service';
-import { KodiPlayerGetAllActiveForm } from '../forms/player/kodi-player-get-all-active.form';
-import { KodiPlayerStopForm } from '../forms/player/kodi-player-stop.form';
-import { KodiPingForm } from '../forms/ping/kodi-ping.form';
-import { Storage } from '@ionic/storage';
-import { kodiConfig } from '../../../config';
+  EventService,
+} from "../../event/event.service";
+import { KodiPlayerGetAllActiveForm } from "../forms/player/kodi-player-get-all-active.form";
+import { KodiPlayerStopForm } from "../forms/player/kodi-player-stop.form";
+import { KodiPingForm } from "../forms/ping/kodi-ping.form";
+import { Storage } from "@ionic/storage";
+import { kodiConfig } from "../../../config";
+import { PlaylistVideo } from "../../../entities/playlist-video";
+import { PlaylistService } from "../../playlist/playlist.service";
+import { KodiSeekToCommand } from "../commands/kodi-seek-to.command";
+import { KodiPlayerSetSubtitleForm } from "../forms/player/kodi-player-set-subtitle.form";
+import { KodiPlayerSetAudioStreamForm } from "../forms/player/kodi-player-set-audio-stream.form";
 
 export class KodiAppService {
-  private static storageHostsKey = 'kodi_hosts';
-  private static storageCurrentHostKey = 'kodi_current_host';
+  private static storageHostsKey = "kodi_hosts";
+  private static storageCurrentHostKey = "kodi_current_host";
 
   protected static storageEngine = new Storage(kodiConfig.storage);
 
@@ -52,19 +72,19 @@ export class KodiAppService {
 
     KodiApiService.connected$
       .pipe(distinctUntilChanged())
-      .subscribe(connected => {
+      .subscribe((connected) => {
         if (this.appInBackground) {
           return;
         }
 
-        wakoLog('mobile-sdk.KodiAppService::connected', connected);
+        wakoLog("mobile-sdk.KodiAppService::connected", connected);
 
         this.isConnected = connected;
         this.isWsConnected = connected;
 
         this.connected$.next({
           isConnected: this.isConnected,
-          isWsConnected: this.isWsConnected
+          isWsConnected: this.isWsConnected,
         });
       });
   }
@@ -95,16 +115,16 @@ export class KodiAppService {
 
     this.wsConnection = KodiApiService.connect(this.currentHost);
 
-    this.wsConnection.onerror = error => {
-      wakoLog('mobile-sdk.KodiAppService::onerror', error);
+    this.wsConnection.onerror = (error) => {
+      wakoLog("mobile-sdk.KodiAppService::onerror", error);
 
       // Checks if the host is HTTP reachable
-      KodiPingForm.submit().subscribe(data => {
-        this.isConnected = data === 'pong';
+      KodiPingForm.submit().subscribe((data) => {
+        this.isConnected = data === "pong";
 
         this.connected$.next({
           isConnected: this.isConnected,
-          isWsConnected: this.isWsConnected
+          isWsConnected: this.isWsConnected,
         });
       });
     };
@@ -121,14 +141,14 @@ export class KodiAppService {
 
     this.connected$.next({
       isConnected: this.isConnected,
-      isWsConnected: this.isWsConnected
+      isWsConnected: this.isWsConnected,
     });
   }
 
   static async getCurrentHost(): Promise<KodiHostStructure> {
     const host = await this.storageEngine.get(this.storageCurrentHostKey);
-    if (host && (!host.name || host.name === '')) {
-      host.name = 'Kodi Host ' + host.host;
+    if (host && (!host.name || host.name === "")) {
+      host.name = "Kodi Host " + host.host;
     }
     return host;
   }
@@ -147,7 +167,7 @@ export class KodiAppService {
     const hosts = await this.getHosts();
 
     const newHosts = [];
-    hosts.forEach(_host => {
+    hosts.forEach((_host) => {
       if (!this.areHostEqual(_host, host)) {
         newHosts.push(_host);
       }
@@ -160,7 +180,7 @@ export class KodiAppService {
     const hosts = await this.getHosts();
 
     let exists = false;
-    hosts.forEach(_host => {
+    hosts.forEach((_host) => {
       if (_host.host === host.host && _host.port === host.port) {
         exists = true;
       }
@@ -176,9 +196,9 @@ export class KodiAppService {
   static async getHosts(): Promise<KodiHostStructure[]> {
     const hosts = (await this.storageEngine.get(this.storageHostsKey)) || [];
 
-    hosts.forEach(host => {
-      if (!host.name || host.name === '') {
-        host.name = 'Kodi Host ' + host.host;
+    hosts.forEach((host) => {
+      if (!host.name || host.name === "") {
+        host.name = "Kodi Host " + host.host;
       }
     });
 
@@ -191,7 +211,7 @@ export class KodiAppService {
     let currentHostExists = false;
 
     if (currentHost) {
-      hosts.forEach(host => {
+      hosts.forEach((host) => {
         if (this.areHostEqual(host, currentHost)) {
           currentHostExists = true;
         }
@@ -221,8 +241,8 @@ export class KodiAppService {
     if (!this.isConnected) {
       this.connectToDefaultHost();
     } else {
-      KodiPingForm.submit().subscribe(data => {
-        if (data === 'pong') {
+      KodiPingForm.submit().subscribe((data) => {
+        if (data === "pong") {
           this.connect();
         } else {
           this.disconnect();
@@ -237,9 +257,9 @@ export class KodiAppService {
    */
   static checkAndConnectToCurrentHost() {
     return of(this.currentHost).pipe(
-      switchMap(currentHost => {
+      switchMap((currentHost) => {
         if (!currentHost) {
-          return throwError('noHost');
+          return throwError("noHost");
         }
 
         if (!this.isConnected) {
@@ -255,7 +275,7 @@ export class KodiAppService {
       }),
       switchMap(() => {
         if (!this.isConnected) {
-          return throwError('hostUnreachable');
+          return throwError("hostUnreachable");
         }
 
         return of(true);
@@ -284,7 +304,7 @@ export class KodiAppService {
   static openUrl(url: string, openMedia?: OpenMedia, openKodiRemote = true) {
     return this.open(
       {
-        file: url
+        file: url,
       },
       openMedia,
       openKodiRemote
@@ -293,7 +313,7 @@ export class KodiAppService {
 
   static stopPlayingIfAny() {
     return KodiPlayerGetAllActiveForm.submit().pipe(
-      switchMap(players => {
+      switchMap((players) => {
         this.openMedia$.next(null);
 
         if (players.length > 0) {
@@ -301,6 +321,77 @@ export class KodiAppService {
         }
 
         return of(true);
+      })
+    );
+  }
+
+  static getPlayerIdOnStart() {
+    return new Observable<number>((observer) => {
+      const playerIdSet$ = new Subject<boolean>();
+      let timer = null;
+      KodiApiService.wsMessage$
+        .pipe(takeUntil(playerIdSet$))
+        .subscribe((data) => {
+          if (data.method === "Player.OnPlay") {
+            // < kodi 18
+            timer = setTimeout(() => {
+              observer.next(data.params.data.player.playerid);
+              observer.complete();
+            }, 3000);
+          }
+          if (data.method === "Player.OnAVStart") {
+            if (timer) {
+              clearTimeout(timer);
+            }
+            observer.next(data.params.data.player.playerid);
+            observer.complete();
+          }
+        });
+    });
+  }
+
+  static resumePlaylistVideo(item: PlaylistVideo) {
+    const playlistService = PlaylistService.getInstance();
+
+    return this.openUrl(item.url, item.openMedia).pipe(
+      switchMap(() => {
+        return this.getPlayerIdOnStart().pipe(
+          switchMap((playerId) => {
+            return from(playlistService.getPlaylistFromItem(item)).pipe(
+              switchMap((playlist) => {
+                const obss = [];
+                const seek = Math.round(
+                  ((item.currentSeconds - 5) / item.totalSeconds) * 100
+                );
+
+                obss.push(KodiSeekToCommand.handle(playerId, seek));
+
+                if (
+                  playlist &&
+                  playlist.customData &&
+                  playlist.customData.kodi
+                ) {
+                  obss.push(
+                    KodiPlayerSetSubtitleForm.submit(
+                      playerId,
+                      playlist.customData.kodi.subtitleEnabled,
+                      playlist.customData.kodi.currentSubtitleIndex
+                    )
+                  );
+
+                  obss.push(
+                    KodiPlayerSetAudioStreamForm.submit(
+                      playerId,
+                      playlist.customData.kodi.currentAudioStream
+                    )
+                  );
+                }
+
+                return concat(...obss);
+              })
+            );
+          })
+        );
       })
     );
   }

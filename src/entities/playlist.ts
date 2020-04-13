@@ -1,4 +1,4 @@
-import { PlaylistVideo } from './playlist-video';
+import { PlaylistVideo } from "./playlist-video";
 
 export interface Playlist {
   id: string;
@@ -7,4 +7,11 @@ export interface Playlist {
   updatedAt?: string;
   poster: string;
   items: PlaylistVideo[];
+  customData?: {
+    kodi?: {
+      subtitleEnabled: boolean;
+      currentSubtitleIndex: number;
+      currentAudioStream: number;
+    };
+  };
 }

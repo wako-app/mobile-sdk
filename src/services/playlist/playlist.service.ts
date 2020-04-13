@@ -1,6 +1,7 @@
 import { Playlist } from "../../entities/playlist";
 import { Storage } from "@ionic/storage";
 import { PlaylistVideo } from "../../entities/playlist-video";
+import { OpenMedia } from "../kodi/services/kodi-app.service";
 
 export class PlaylistService {
   private storageKey = "wako_playlist_items";
@@ -110,5 +111,39 @@ export class PlaylistService {
         ? -1
         : 1;
     });
+  }
+
+  async getPlaylistFromItem(item: PlaylistVideo) {
+    const playlists = await this.getAllPlaylistsSortedByDateDesc();
+    for (const playlist of playlists) {
+      for (const i of playlist.items) {
+        if (this.isCurrentItem(i, item.url, item.openMedia)) {
+          return playlist;
+        }
+      }
+    }
+    return null;
+  }
+
+  isCurrentItem(item: PlaylistVideo, videoUrl: string, openMedia?: OpenMedia) {
+    if (openMedia && item.openMedia) {
+      if (
+        item.openMedia.movieTraktId &&
+        item.openMedia.movieTraktId === openMedia.movieTraktId
+      ) {
+        return true;
+      }
+      if (
+        item.openMedia.showTraktId &&
+        item.openMedia.showTraktId === openMedia.showTraktId
+      ) {
+        return (
+          openMedia.seasonNumber === item.openMedia.seasonNumber &&
+          openMedia.episodeNumber === item.openMedia.episodeNumber
+        );
+      }
+    }
+
+    return videoUrl === item.url;
   }
 }
