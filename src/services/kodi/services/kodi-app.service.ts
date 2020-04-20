@@ -8,20 +8,18 @@ import { EventCategory, EventName, EventService } from '../../event/event.servic
 import { KodiPlayerGetAllActiveForm } from '../forms/player/kodi-player-get-all-active.form';
 import { KodiPlayerStopForm } from '../forms/player/kodi-player-stop.form';
 import { KodiPingForm } from '../forms/ping/kodi-ping.form';
-import { Storage } from '@ionic/storage';
-import { kodiConfig } from '../../../config';
 import { PlaylistVideo } from '../../../entities/playlist-video';
 import { PlaylistService } from '../../playlist/playlist.service';
 import { KodiSeekToCommand } from '../commands/kodi-seek-to.command';
 import { KodiPlayerSetSubtitleForm } from '../forms/player/kodi-player-set-subtitle.form';
 import { KodiPlayerSetAudioStreamForm } from '../forms/player/kodi-player-set-audio-stream.form';
 import { KodiApplicationGetPropertiesForm } from '../forms/application/kodi-application-get-properties.form';
+import { WakoSettingsService } from '../../app/wako-settings.service';
 
 export class KodiAppService {
-  private static storageHostsKey = 'kodi_hosts';
-  private static storageCurrentHostKey = 'kodi_current_host';
+  private static storageHostsCategory = 'kodi_hosts';
 
-  protected static storageEngine = new Storage(kodiConfig.storage);
+  private static storageCurrentHostCategory = 'kodi_current_host';
 
   static currentHost: KodiHostStructure;
 
@@ -125,20 +123,20 @@ export class KodiAppService {
     });
   }
 
-  static async getCurrentHost(): Promise<KodiHostStructure> {
-    const host = await this.storageEngine.get(this.storageCurrentHostKey);
+  static async getCurrentHost() {
+    const host = await WakoSettingsService.getByCategory<KodiHostStructure>(this.storageCurrentHostCategory);
     if (host && (!host.name || host.name === '')) {
       host.name = 'Kodi Host ' + host.host;
     }
     return host;
   }
 
-  static async setCurrentHost(host: KodiHostStructure): Promise<KodiHostStructure> {
-    const d = await this.storageEngine.set(this.storageCurrentHostKey, host);
+  static async setCurrentHost(host: KodiHostStructure) {
+    await WakoSettingsService.setByCategory(this.storageCurrentHostCategory, host);
 
     this.connectToDefaultHost();
 
-    return d;
+    return host;
   }
 
   static async removeHost(host: KodiHostStructure): Promise<any> {
@@ -171,8 +169,8 @@ export class KodiAppService {
     return await this.setHosts(hosts);
   }
 
-  static async getHosts(): Promise<KodiHostStructure[]> {
-    const hosts = (await this.storageEngine.get(this.storageHostsKey)) || [];
+  static async getHosts() {
+    const hosts = (await WakoSettingsService.getByCategory<KodiHostStructure[]>(this.storageHostsCategory)) || [];
 
     hosts.forEach((host) => {
       if (!host.name || host.name === '') {
@@ -196,7 +194,7 @@ export class KodiAppService {
       });
     }
 
-    await this.storageEngine.set(this.storageHostsKey, hosts);
+    await WakoSettingsService.setByCategory(this.storageHostsCategory, hosts);
 
     if (!currentHostExists) {
       await this.setCurrentHost(hosts.length ? hosts[0] : null);

@@ -1,15 +1,15 @@
 import { map } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { Storage } from '@ionic/storage';
-import { kodiConfig } from '../../config';
+import { WakoStorageCacheConfig } from '../../config';
 
 export class WakoCacheService {
-  protected static storageEngine = new Storage(kodiConfig.storageCache);
+  protected static storageEngine = new Storage(WakoStorageCacheConfig);
 
   private static serialize(data: any, expiresAt: number) {
     const d: CacheSerialized = {
       data: data,
-      expiresAt: expiresAt
+      expiresAt: expiresAt,
     };
 
     return JSON.stringify(d);
@@ -39,7 +39,7 @@ export class WakoCacheService {
         return {
           data: cache.data as T,
           hasExpired: this.hasExpired(cache),
-          key: key
+          key: key,
         };
       })
     );
@@ -47,7 +47,7 @@ export class WakoCacheService {
 
   static get<T>(key: string) {
     return this.getCacheObject<T>(key).pipe(
-      map(cacheObject => {
+      map((cacheObject) => {
         if (cacheObject === null) {
           return null;
         }
@@ -90,11 +90,9 @@ export class WakoCacheService {
       }
     }
 
-    return this.storageEngine
-      .set(key, this.serialize(data, date.getTime()))
-      .catch(err => {
-        console.log({ err });
-      });
+    return this.storageEngine.set(key, this.serialize(data, date.getTime())).catch((err) => {
+      console.log({ err });
+    });
   }
 
   static remove(key: string) {
