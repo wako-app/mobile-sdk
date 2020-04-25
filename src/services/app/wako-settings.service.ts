@@ -76,7 +76,7 @@ export class WakoSettingsService {
 
     await this.storage.set(
       this.listStorageKey,
-      list.map((cat) => cat !== category)
+      list.filter((cat) => cat !== category)
     );
   }
 
