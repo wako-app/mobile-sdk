@@ -17,9 +17,9 @@ import { KodiApplicationGetPropertiesForm } from '../forms/application/kodi-appl
 import { WakoSettingsService } from '../../app/wako-settings.service';
 
 export class KodiAppService {
-  private static storageHostsCategory = 'kodi_hosts';
+  private static storageCategoryHosts = 'kodi_hosts';
 
-  private static storageCurrentHostCategory = 'kodi_current_host';
+  private static storageCategoryCurrentHostIndex = 'kodi_current_host';
 
   static currentHost: KodiHostStructure;
 
@@ -124,15 +124,39 @@ export class KodiAppService {
   }
 
   static async getCurrentHost() {
-    const host = await WakoSettingsService.getByCategory<KodiHostStructure>(this.storageCurrentHostCategory);
-    if (host && (!host.name || host.name === '')) {
-      host.name = 'Kodi Host ' + host.host;
+    const hosts = await this.getHosts();
+    const hostIndex = +(await WakoSettingsService.getByCategory<KodiHostStructure>(
+      this.storageCategoryCurrentHostIndex
+    ));
+
+    let currentHost = hosts[0];
+
+    if (typeof hosts[hostIndex] !== 'undefined') {
+      currentHost = hosts[hostIndex];
     }
-    return host;
+
+    return currentHost;
   }
 
   static async setCurrentHost(host: KodiHostStructure) {
-    await WakoSettingsService.setByCategory(this.storageCurrentHostCategory, host);
+    const hosts = await this.getHosts();
+    let hostIndex = null;
+
+    for (const index in hosts) {
+      if (typeof hosts[index] !== 'undefined') {
+        if (this.areHostEqual(hosts[index], host)) {
+          hostIndex = index;
+        }
+      }
+    }
+
+    if (hostIndex === null) {
+      hosts.push(host);
+      await this.setHosts(hosts);
+      hostIndex = hosts.length - 1;
+    }
+
+    await WakoSettingsService.setByCategory(this.storageCategoryCurrentHostIndex, hostIndex);
 
     this.connectToDefaultHost();
 
@@ -157,7 +181,7 @@ export class KodiAppService {
 
     let exists = false;
     hosts.forEach((_host) => {
-      if (_host.host === host.host && _host.port === host.port) {
+      if (this.areHostEqual(_host, host)) {
         exists = true;
       }
     });
@@ -170,7 +194,7 @@ export class KodiAppService {
   }
 
   static async getHosts() {
-    const hosts = (await WakoSettingsService.getByCategory<KodiHostStructure[]>(this.storageHostsCategory)) || [];
+    const hosts = (await WakoSettingsService.getByCategory<KodiHostStructure[]>(this.storageCategoryHosts)) || [];
 
     hosts.forEach((host) => {
       if (!host.name || host.name === '') {
@@ -194,7 +218,7 @@ export class KodiAppService {
       });
     }
 
-    await WakoSettingsService.setByCategory(this.storageHostsCategory, hosts);
+    await WakoSettingsService.setByCategory(this.storageCategoryHosts, hosts);
 
     if (!currentHostExists) {
       await this.setCurrentHost(hosts.length ? hosts[0] : null);
