@@ -138,22 +138,23 @@ export class KodiAppService {
     return currentHost;
   }
 
-  static async setCurrentHost(host: KodiHostStructure) {
+  static async setCurrentHost(host?: KodiHostStructure) {
     const hosts = await this.getHosts();
     let hostIndex = null;
 
-    for (const index in hosts) {
-      if (typeof hosts[index] !== 'undefined') {
-        if (this.areHostEqual(hosts[index], host)) {
-          hostIndex = index;
+    if (host) {
+      for (const index in hosts) {
+        if (typeof hosts[index] !== 'undefined') {
+          if (this.areHostEqual(hosts[index], host)) {
+            hostIndex = index;
+          }
         }
       }
-    }
 
-    if (hostIndex === null) {
-      hosts.push(host);
-      await this.setHosts(hosts);
-      hostIndex = hosts.length - 1;
+      if (hostIndex === null) {
+        await this.addHost(host);
+        hostIndex = hosts.length - 1;
+      }
     }
 
     await WakoSettingsService.setByCategory(this.storageCategoryCurrentHostIndex, hostIndex);
