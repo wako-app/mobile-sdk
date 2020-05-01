@@ -1,17 +1,22 @@
-export class Episode {
-  traktSeasonNumber: number;
-  traktNumber: number;
+import { BaseCommonMedia } from './base-media';
+
+export interface Episode extends BaseCommonMedia {
+  seasonNumber: number;
+  number: number;
   absoluteNumber: number;
   code: string;
-  title: string;
-  imdbId: string;
-  tmdbId: number;
   tvdbId: number;
-  traktId: number;
-  overview: string;
   firstAired: string;
-  rating: number;
-  votes: number;
   runtime: number;
   watched: boolean;
+
+  /**
+   * @deprecated use seasonNumber
+   */
+  traktSeasonNumber: number;
+
+  /**
+   * @deprecated use number
+   */
+  traktNumber: number;
 }

@@ -1,10 +1,10 @@
-import { Playlist } from "../../entities/playlist";
-import { Storage } from "@ionic/storage";
-import { PlaylistVideo } from "../../entities/playlist-video";
-import { OpenMedia } from "../kodi/services/kodi-app.service";
+import { Playlist } from '../../entities/playlist';
+import { Storage } from '@ionic/storage';
+import { PlaylistVideo } from '../../entities/playlist-video';
+import { OpenMedia } from '../kodi/services/kodi-app.service';
 
 export class PlaylistService {
-  private storageKey = "wako_playlist_items";
+  private storageKey = 'wako_playlist_items';
 
   private static instance: PlaylistService;
 
@@ -20,7 +20,7 @@ export class PlaylistService {
 
   static getInstance() {
     if (!this.instance) {
-      throw new Error("PlaylistService has not been initialize");
+      throw new Error('PlaylistService has not been initialize');
     }
 
     return this.instance;
@@ -107,9 +107,7 @@ export class PlaylistService {
       if (playlist1.updatedAt === playlist2.updatedAt) {
         return 0;
       }
-      return new Date(playlist1.updatedAt) > new Date(playlist2.updatedAt)
-        ? -1
-        : 1;
+      return new Date(playlist1.updatedAt) > new Date(playlist2.updatedAt) ? -1 : 1;
     });
   }
 
@@ -127,16 +125,15 @@ export class PlaylistService {
 
   isCurrentItem(item: PlaylistVideo, videoUrl: string, openMedia?: OpenMedia) {
     if (openMedia && item.openMedia) {
-      if (
-        item.openMedia.movieTraktId &&
-        item.openMedia.movieTraktId === openMedia.movieTraktId
-      ) {
+      if (item.openMedia.movieImdbId && item.openMedia.movieImdbId === openMedia.movieImdbId) {
         return true;
       }
-      if (
-        item.openMedia.showTraktId &&
-        item.openMedia.showTraktId === openMedia.showTraktId
-      ) {
+
+      if (item.openMedia.movieTraktId && item.openMedia.movieTraktId === openMedia.movieTraktId) {
+        return true;
+      }
+
+      if (item.openMedia.showTraktId && item.openMedia.showTraktId === openMedia.showTraktId) {
         return (
           openMedia.seasonNumber === item.openMedia.seasonNumber &&
           openMedia.episodeNumber === item.openMedia.episodeNumber

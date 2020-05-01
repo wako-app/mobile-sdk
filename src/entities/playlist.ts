@@ -1,4 +1,4 @@
-import { PlaylistVideo } from "./playlist-video";
+import { PlaylistVideo } from './playlist-video';
 
 export interface Playlist {
   id: string;

@@ -1,27 +1,10 @@
-export class Movie {
-  title: string;
-  year: number;
-  imdbId: string;
+import { BaseMedia } from './base-media';
+
+export interface Movie extends BaseMedia {
   traktId: number;
+  imdbId: string;
   tmdbId?: number;
-  rating: number;
-  votes: number;
-  images_url?: {
-    poster?: string;
-    backdrop?: string;
-    poster_original?: string;
-    backdrop_original?: string;
-  };
-  certification: string;
-  genres: string[];
   tagline?: string;
-  overview: string;
   released?: string;
-  runtime: number;
-  trailer: string;
-  language: string;
-  relatedIds: string[] = [];
-  alternativeTitles?: { [key: string]: string };
-  originalTitle: string;
-  status: string;
+  relatedImdbIds: string[];
 }

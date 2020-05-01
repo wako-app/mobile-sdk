@@ -302,13 +302,46 @@ export class KodiAppService {
     );
   }
 
-  static openUrl(url: string, openMedia?: OpenMedia, openKodiRemote = true) {
+  static openUrl(url: string, openMedia?: OpenMedia, openKodiRemote = true, params?: KodiOpenParams) {
     return this.open(
       {
         file: url,
       },
       openMedia,
       openKodiRemote
+    ).pipe(
+      switchMap((res) => {
+        if (typeof params === 'undefined') {
+          return of(res);
+        }
+        return KodiApplicationGetPropertiesForm.submit().pipe(
+          switchMap((properties) => {
+            return this.getPlayerIdOnStart(properties.version.major).pipe(
+              switchMap((playerId) => {
+                const obss = [];
+
+                if (params.seekTo) {
+                  obss.push(KodiSeekToCommand.handle(playerId, params.seekTo));
+                }
+
+                obss.push(
+                  KodiPlayerSetSubtitleForm.submit(
+                    playerId,
+                    params.enableSubtitle || false,
+                    params.subtitleIndex || null
+                  )
+                );
+
+                if (params.audioStreamIndex) {
+                  obss.push(KodiPlayerSetAudioStreamForm.submit(playerId, params.audioStreamIndex));
+                }
+
+                return obss.length > 0 ? concat(...obss) : of(true);
+              })
+            );
+          })
+        );
+      })
     );
   }
 
@@ -354,46 +387,35 @@ export class KodiAppService {
   static resumePlaylistVideo(item: PlaylistVideo) {
     const playlistService = PlaylistService.getInstance();
 
-    return KodiApplicationGetPropertiesForm.submit().pipe(
-      switchMap((properties) => {
-        return this.openUrl(item.url, item.openMedia).pipe(
-          switchMap(() => {
-            return this.getPlayerIdOnStart(properties.version.major).pipe(
-              switchMap((playerId) => {
-                return from(playlistService.getPlaylistFromItem(item)).pipe(
-                  switchMap((playlist) => {
-                    const obss = [];
-                    const seek = Math.round(((item.currentSeconds - 5) / item.totalSeconds) * 100);
+    return from(playlistService.getPlaylistFromItem(item)).pipe(
+      switchMap((playlist) => {
+        const seek = Math.round(((item.currentSeconds - 5) / item.totalSeconds) * 100);
 
-                    obss.push(KodiSeekToCommand.handle(playerId, seek));
+        const params: KodiOpenParams = {
+          seekTo: seek,
+        };
 
-                    if (playlist && playlist.customData && playlist.customData.kodi) {
-                      obss.push(
-                        KodiPlayerSetSubtitleForm.submit(
-                          playerId,
-                          playlist.customData.kodi.subtitleEnabled,
-                          playlist.customData.kodi.currentSubtitleIndex
-                        )
-                      );
+        if (playlist && playlist.customData && playlist.customData.kodi) {
+          params.enableSubtitle = playlist.customData.kodi.subtitleEnabled;
+          params.subtitleIndex = playlist.customData.kodi.currentSubtitleIndex;
+          params.audioStreamIndex = playlist.customData.kodi.currentAudioStream;
+        }
 
-                      obss.push(
-                        KodiPlayerSetAudioStreamForm.submit(playerId, playlist.customData.kodi.currentAudioStream)
-                      );
-                    }
-
-                    return concat(...obss);
-                  })
-                );
-              })
-            );
-          })
-        );
+        return this.openUrl(item.url, item.openMedia, true, params);
       })
     );
   }
 }
 
+export interface KodiOpenParams {
+  seekTo?: number;
+  enableSubtitle?: boolean;
+  subtitleIndex?: number;
+  audioStreamIndex?: number;
+}
+
 export interface OpenMedia {
+  movieImdbId?: string;
   movieTraktId?: number;
   showTraktId?: number;
   seasonNumber?: number;

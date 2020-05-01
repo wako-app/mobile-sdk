@@ -1,21 +1,20 @@
-import { Episode } from "./episode";
+import { Episode } from './episode';
+import { BaseCommonMedia } from './base-media';
 
-export class Season {
-  traktNumber: number;
+export interface Season extends BaseCommonMedia {
+  number: number;
   code: string;
   isSpecial: boolean;
-  title: string;
-  imdbId: string;
-  tmdbId: number;
   tvdbId: number;
-  overview: string;
   firstAired: string;
   network: string;
-  rating: number;
-  votes: number;
   airedEpisodes: number;
   episodeCount: number;
   episodes: Episode[];
   totalEpisodesWatched: number;
-  status: "completed" | "waiting for new episode" | "in progress";
+  status: 'completed' | 'waiting for new episode' | 'in progress';
+  /**
+   * @deprecated use number
+   */
+  traktNumber: number;
 }
