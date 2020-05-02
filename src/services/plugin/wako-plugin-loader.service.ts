@@ -267,12 +267,22 @@ export class WakoPluginLoaderService {
     pluginService.setTranslation(lang, translation);
   }
 
-  createComponent(action: PluginAction, viewContainerRef: ViewContainerRef, data?: any, pluginId?: string) {
-    this.loaded$.pipe(first()).subscribe(() => {
-      this.pluginModuleMap.forEach((pluginMap) => {
-        if (pluginId && pluginMap.pluginDetail.manifest.id !== pluginId) {
-          return;
+  createComponentObservable(action: PluginAction, viewContainerRef: ViewContainerRef, data?: any, pluginId?: string) {
+    return this.loaded$.pipe(
+      first(),
+      map(() => {
+        let pluginMap = null;
+        this.pluginModuleMap.forEach((plugin) => {
+          if (pluginId && plugin.pluginDetail.manifest.id !== pluginId) {
+            return;
+          }
+          pluginMap = plugin;
+        });
+
+        if (!pluginMap) {
+          return null;
         }
+
         const moduleType = pluginMap.moduleType;
 
         if (
@@ -336,8 +346,14 @@ export class WakoPluginLoaderService {
 
           showComponent.instance.setShow(data.show);
         }
-      });
-    });
+
+        return true;
+      })
+    );
+  }
+
+  createComponent(action: PluginAction, viewContainerRef: ViewContainerRef, data?: any, pluginId?: string) {
+    this.createComponentObservable(action, viewContainerRef, data, pluginId).subscribe();
   }
 
   addonHasActionComponent(pluginId: string, action: PluginAction) {
