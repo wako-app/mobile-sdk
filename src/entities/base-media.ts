@@ -7,6 +7,7 @@ export interface BaseMediaImage {
 
 export interface BaseMediaRating {
   name: string;
+  url?: string;
   imageUrl?: string;
   rating: number;
   votes: number;
