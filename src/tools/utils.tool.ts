@@ -1,3 +1,5 @@
+import { BaseIds } from '../entities/base-media';
+
 export function getDomainFromUrl(url: string) {
   return url.replace(/http(s)?:\/\//gi, '').split('/')[0];
 }
@@ -53,4 +55,14 @@ export function mergeDeep(target, source) {
     });
   }
   return target;
+}
+
+export function isSameId(sourceIds: BaseIds, targetIds: BaseIds) {
+  return (
+    (sourceIds.trakt && targetIds.trakt && +sourceIds.trakt === +targetIds.trakt) ||
+    (sourceIds.imdb && targetIds.imdb && sourceIds.imdb.toString() === targetIds.imdb.toString()) ||
+    (sourceIds.tmdb && targetIds.tmdb && +sourceIds.tmdb === +targetIds.tmdb) ||
+    (sourceIds.tvdb && targetIds.tvdb && sourceIds.tvdb.toString() === targetIds.tvdb.toString()) ||
+    (sourceIds.simkl && targetIds.simkl && +sourceIds.simkl === +targetIds.simkl)
+  );
 }

@@ -2,6 +2,7 @@ import { Playlist } from '../../entities/playlist';
 import { Storage } from '@ionic/storage';
 import { PlaylistVideo } from '../../entities/playlist-video';
 import { OpenMedia } from '../kodi/services/kodi-app.service';
+import { isSameId } from '../../tools/utils.tool';
 
 export class PlaylistService {
   private storageKey = 'wako_playlist_items';
@@ -125,7 +126,7 @@ export class PlaylistService {
 
   isCurrentItem(item: PlaylistVideo, videoUrl: string, openMedia?: OpenMedia) {
     if (openMedia && item.openMedia) {
-      if (item.openMedia.movieImdbId && item.openMedia.movieImdbId === openMedia.movieImdbId) {
+      if (item.openMedia.movieIds && isSameId(item.openMedia.movieIds, openMedia.movieIds)) {
         return true;
       }
 
@@ -133,7 +134,10 @@ export class PlaylistService {
         return true;
       }
 
-      if (item.openMedia.showTraktId && item.openMedia.showTraktId === openMedia.showTraktId) {
+      if (
+        (item.openMedia.showIds && isSameId(item.openMedia.showIds, openMedia.showIds)) ||
+        (item.openMedia.showTraktId && item.openMedia.showTraktId === openMedia.showTraktId)
+      ) {
         return (
           openMedia.seasonNumber === item.openMedia.seasonNumber &&
           openMedia.episodeNumber === item.openMedia.episodeNumber

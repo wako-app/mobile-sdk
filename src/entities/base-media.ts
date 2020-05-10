@@ -18,22 +18,28 @@ export interface BaseMediaRatings {
   trakt?: BaseMediaRating;
 }
 
+export interface BaseIds {
+  trakt?: number;
+  simkl?: number;
+  imdb?: string;
+  tmdb?: number;
+  tvdb?: string;
+}
+
 export interface BaseCommonMedia {
-  type: 'movie' | 'show' | 'season' | 'episode';
+  type: 'movie' | 'show' | 'anime' | 'season' | 'episode';
   title: string;
   overview: string;
   rating: number;
   votes: number;
   ratings: BaseMediaRatings | { [key: string]: BaseMediaRating };
   imagesUrl: BaseMediaImage;
-  traktId: number;
-  imdbId?: string;
-  tmdbId?: number;
+  ids: BaseIds;
 }
 
 export interface BaseMedia extends BaseCommonMedia {
   year: number;
-  certification: string;
+  certification?: string;
   runtime: number;
   genres: string[];
   status: string;

@@ -1,4 +1,5 @@
 import { EventEmitter } from '@angular/core';
+import { BaseIds } from '../../entities/base-media';
 
 export class EventService {
   private static events = new Map<string, EventEmitter<EventAction<any>>>();
@@ -25,7 +26,7 @@ export class EventService {
 
     const action: EventAction<any> = {
       action: eventName,
-      data: data
+      data: data,
     };
 
     this.events.get(eventCategoryKey).next(action);
@@ -59,7 +60,7 @@ export const EventCategory = {
   searchSource: 'SearchSource',
   kodiRemote: 'KodiRemote',
   kodi: 'kodi',
-  playlist: 'playlist'
+  playlist: 'playlist',
 };
 
 export const EventName = {
@@ -74,21 +75,23 @@ export const EventName = {
   searchFromOpenButton: 'searchFromOpenButton',
   searchFromSourceList: 'searchFromSourceList',
   open: 'open',
-  change: 'change'
+  change: 'change',
 };
 
 export interface EventChangeData {
-  imdbId?: string;
   callOrigin: string;
 }
 
 export interface EventShowChangeData extends EventChangeData {
-  showTraktId: number;
+  showIds: BaseIds;
   showTitle: string;
+  code?: string;
   seasonNumber?: number;
   episodeNumber?: number;
+  trackerName?: string;
 }
 
 export interface EventMovieChangeData extends EventChangeData {
-  movieTraktId: number;
+  ids: BaseIds;
+  trackerName?: string;
 }

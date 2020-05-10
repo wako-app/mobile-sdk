@@ -15,6 +15,7 @@ import { KodiPlayerSetSubtitleForm } from '../forms/player/kodi-player-set-subti
 import { KodiPlayerSetAudioStreamForm } from '../forms/player/kodi-player-set-audio-stream.form';
 import { KodiApplicationGetPropertiesForm } from '../forms/application/kodi-application-get-properties.form';
 import { WakoSettingsService } from '../../app/wako-settings.service';
+import { BaseIds } from '../../../entities/base-media';
 
 export class KodiAppService {
   private static storageCategoryHosts = 'kodi_hosts';
@@ -415,8 +416,15 @@ export interface KodiOpenParams {
 }
 
 export interface OpenMedia {
-  movieImdbId?: string;
+  movieIds?: BaseIds;
+  showIds?: BaseIds;
+  /**
+   * @deprecated use movieIds
+   */
   movieTraktId?: number;
+  /**
+   * @deprecated use showIds
+   */
   showTraktId?: number;
   seasonNumber?: number;
   episodeNumber?: number;

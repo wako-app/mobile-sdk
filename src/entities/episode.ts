@@ -5,18 +5,7 @@ export interface Episode extends BaseCommonMedia {
   number: number;
   absoluteNumber: number;
   code: string;
-  tvdbId: number;
   firstAired: string;
   runtime: number;
   watched: boolean;
-
-  /**
-   * @deprecated use seasonNumber
-   */
-  traktSeasonNumber: number;
-
-  /**
-   * @deprecated use number
-   */
-  traktNumber: number;
 }
