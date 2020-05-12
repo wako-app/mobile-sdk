@@ -33,7 +33,18 @@
       "description": "Where the plugin will be used inside wako",
       "items": {
         "type": "string",
-        "enum": ["movies", "episodes", "episodes-item-option", "shows"]
+        "enum": [
+          "movies",
+          "episodes",
+          "episodes-item-option",
+          "shows",
+          "before-movie-middleware",
+          "after-movie-middleware",
+          "before-show-middleware",
+          "after-show-middleware",
+          "before-episode-middleware",
+          "after-episode-middleware"
+        ]
       }
     },
     "entryPoint": {
@@ -49,13 +60,5 @@
       "description": "Change logs. The key will be the version and the value the description"
     }
   },
-  "required": [
-    "version",
-    "id",
-    "name",
-    "description",
-    "actions",
-    "entryPointV2",
-    "languages"
-  ]
+  "required": ["version", "id", "name", "description", "actions", "entryPointV2", "languages"]
 }

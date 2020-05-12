@@ -11,6 +11,11 @@ import { ShowDetailBaseComponent } from '../../components/show-detail-base.compo
 import { WakoHttpRequestService } from '../http/wako-http-request.service';
 import { mergeDeep } from '../../tools/utils.tool';
 import { WakoSettingsService } from '../app/wako-settings.service';
+import { Movie } from '../../entities/movie';
+import { PluginBaseService } from './plugin-base.service';
+import { Show } from '../../entities/show';
+import { Episode } from '../../entities/episode';
+import { WakoDebugService } from '../../tools/wako-debug.tool';
 
 export class WakoPluginLoaderService {
   loaded$ = new ReplaySubject<boolean>(1);
@@ -406,12 +411,113 @@ export class WakoPluginLoaderService {
     return +version.replace('.', ''); // Replace only the first .
   }
 
-  getPluginService(pluginId: string) {
+  getPluginService(pluginId: string): PluginBaseService {
     const plugin = this.pluginModuleMap.get(pluginId);
     if (plugin) {
       return this.moduleLoader.getPluginService(plugin.moduleType, plugin.injector);
     }
     return null;
+  }
+
+  private getPluginIdsByAction(action: PluginAction) {
+    const pluginIds = [];
+    this.pluginModuleMap.forEach((pluginMap) => {
+      if (pluginMap.pluginDetail.manifest.actions.includes(action)) {
+        pluginIds.push(pluginMap.pluginDetail.manifest.id);
+      }
+    });
+
+    return pluginIds;
+  }
+
+  async beforeMovieMiddleware(movie: Movie): Promise<Movie> {
+    for (const pluginId of this.getPluginIdsByAction('before-movie-middleware')) {
+      const pluginService = this.getPluginService(pluginId);
+      if (typeof pluginService.beforeMovieMiddleware === 'function') {
+        try {
+          movie = await pluginService.beforeMovieMiddleware(movie);
+        } catch (e) {
+          WakoDebugService.log(pluginId, e.toString());
+        }
+      }
+    }
+
+    return movie;
+  }
+
+  async afterMovieMiddleware(movie: Movie): Promise<Movie> {
+    for (const pluginId of this.getPluginIdsByAction('after-movie-middleware')) {
+      const pluginService = this.getPluginService(pluginId);
+      if (typeof pluginService.afterMovieMiddleware === 'function') {
+        try {
+          movie = await pluginService.afterMovieMiddleware(movie);
+        } catch (e) {
+          WakoDebugService.log(pluginId, e.toString());
+        }
+      }
+    }
+
+    return movie;
+  }
+
+  async beforeShowMiddleware(show: Show): Promise<Show> {
+    for (const pluginId of this.getPluginIdsByAction('before-show-middleware')) {
+      const pluginService = this.getPluginService(pluginId);
+      if (typeof pluginService.beforeShowMiddleware === 'function') {
+        try {
+          show = await pluginService.beforeShowMiddleware(show);
+        } catch (e) {
+          WakoDebugService.log(pluginId, e.toString());
+        }
+      }
+    }
+
+    return show;
+  }
+
+  async afterShowMiddleware(show: Show): Promise<Show> {
+    for (const pluginId of this.getPluginIdsByAction('after-show-middleware')) {
+      const pluginService = this.getPluginService(pluginId);
+      if (typeof pluginService.afterShowMiddleware === 'function') {
+        try {
+          show = await pluginService.afterShowMiddleware(show);
+        } catch (e) {
+          WakoDebugService.log(pluginId, e.toString());
+        }
+      }
+    }
+
+    return show;
+  }
+
+  async beforeEpisodeMiddleware(show: Show, episode: Episode): Promise<Episode> {
+    for (const pluginId of this.getPluginIdsByAction('before-episode-middleware')) {
+      const pluginService = this.getPluginService(pluginId);
+      if (typeof pluginService.beforeEpisodeMiddleware === 'function') {
+        try {
+          episode = await pluginService.beforeEpisodeMiddleware(show, episode);
+        } catch (e) {
+          WakoDebugService.log(pluginId, e.toString());
+        }
+      }
+    }
+
+    return episode;
+  }
+
+  async afterEpisodeMiddleware(show: Show, episode: Episode): Promise<Episode> {
+    for (const pluginId of this.getPluginIdsByAction('after-episode-middleware')) {
+      const pluginService = this.getPluginService(pluginId);
+      if (typeof pluginService.afterEpisodeMiddleware === 'function') {
+        try {
+          episode = await pluginService.afterEpisodeMiddleware(show, episode);
+        } catch (e) {
+          WakoDebugService.log(pluginId, e.toString());
+        }
+      }
+    }
+
+    return episode;
   }
 }
 
@@ -427,7 +533,13 @@ export declare type PluginAction =
   | 'plugin-detail'
   | 'settings'
   | 'episodes-item-option'
-  | 'shows';
+  | 'shows'
+  | 'before-movie-middleware'
+  | 'after-movie-middleware'
+  | 'before-show-middleware'
+  | 'after-show-middleware'
+  | 'before-episode-middleware'
+  | 'after-episode-middleware';
 
 export class PluginDetail {
   manifest: PluginManifest;
