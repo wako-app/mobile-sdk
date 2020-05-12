@@ -32,7 +32,7 @@ export interface BaseCommonMedia {
   overview: string;
   rating: number;
   votes: number;
-  ratings: BaseMediaRatings | { [key: string]: BaseMediaRating };
+  ratings: BaseMediaRatings & { [key: string]: BaseMediaRating };
   imagesUrl: BaseMediaImage;
   ids: BaseIds;
 }
