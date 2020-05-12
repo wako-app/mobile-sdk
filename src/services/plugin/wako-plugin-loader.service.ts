@@ -15,7 +15,7 @@ import { Movie } from '../../entities/movie';
 import { PluginBaseService } from './plugin-base.service';
 import { Show } from '../../entities/show';
 import { Episode } from '../../entities/episode';
-import { WakoDebugService } from '../../tools/wako-debug.tool';
+import { WakoDebugService } from '../../tools/wako-debug.service';
 
 export class WakoPluginLoaderService {
   loaded$ = new ReplaySubject<boolean>(1);
