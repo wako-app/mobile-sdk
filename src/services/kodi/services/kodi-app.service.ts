@@ -301,7 +301,7 @@ export class KodiAppService {
     }
 
     if (openMedia.episodeNumber) {
-      urlParts.push(`seasonNumber=${openMedia.episodeNumber}`);
+      urlParts.push(`episodeNumber=${openMedia.episodeNumber}`);
     }
 
     return url + '|' + urlParts.join('&');
