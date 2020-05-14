@@ -285,6 +285,28 @@ export class KodiAppService {
     );
   }
 
+  static prependOpenMediaToUrl(url: string, openMedia?: OpenMedia) {
+    if (!openMedia) {
+      return url;
+    }
+    const urlParts = [];
+    if (openMedia.movieIds) {
+      urlParts.push(`movieIds=${JSON.stringify(openMedia.movieIds)}`);
+    }
+    if (openMedia.showIds) {
+      urlParts.push(`showIds=${JSON.stringify(openMedia.showIds)}`);
+    }
+    if (openMedia.seasonNumber) {
+      urlParts.push(`seasonNumber=${openMedia.seasonNumber}`);
+    }
+
+    if (openMedia.episodeNumber) {
+      urlParts.push(`seasonNumber=${openMedia.episodeNumber}`);
+    }
+
+    return url + '|' + urlParts.join('&');
+  }
+
   static open(item: object, openMedia?: OpenMedia, openKodiRemote = true) {
     return this.stopPlayingIfAny().pipe(
       switchMap(() => KodiPlayerOpenForm.submit(item)),
@@ -306,7 +328,7 @@ export class KodiAppService {
   static openUrl(url: string, openMedia?: OpenMedia, openKodiRemote = true, params?: KodiOpenParams) {
     return this.open(
       {
-        file: url,
+        file: this.prependOpenMediaToUrl(url, openMedia),
       },
       openMedia,
       openKodiRemote
@@ -344,6 +366,51 @@ export class KodiAppService {
         );
       })
     );
+  }
+
+  static getOpenMediaFromUrl(url: string) {
+    if (url && url.match('|')) {
+      const urlSearchParams = new URLSearchParams(url.split('|').pop());
+      const openMedia: OpenMedia = {};
+
+      /**
+       * @deprecated
+       */
+      if (urlSearchParams.has('movieTraktId') && Number.isInteger(+urlSearchParams.get('movieTraktId'))) {
+        openMedia.movieIds = {
+          trakt: +urlSearchParams.get('movieTraktId'),
+        };
+      }
+
+      if (urlSearchParams.has('movieIds')) {
+        openMedia.movieIds = JSON.parse(urlSearchParams.get('movieIds'));
+      }
+
+      /**
+       * @deprecated
+       */
+      if (urlSearchParams.has('showTraktId') && Number.isInteger(+urlSearchParams.get('showTraktId'))) {
+        openMedia.showIds = {
+          trakt: +urlSearchParams.get('showTraktId'),
+        };
+      }
+
+      if (urlSearchParams.has('showIds')) {
+        openMedia.showIds = JSON.parse(urlSearchParams.get('showIds'));
+      }
+
+      if (urlSearchParams.has('seasonNumber') && Number.isInteger(+urlSearchParams.get('seasonNumber'))) {
+        openMedia.seasonNumber = +urlSearchParams.get('seasonNumber');
+      }
+
+      if (urlSearchParams.has('episodeNumber') && Number.isInteger(+urlSearchParams.get('episodeNumber'))) {
+        openMedia.episodeNumber = +urlSearchParams.get('episodeNumber');
+      }
+
+      return openMedia;
+    }
+
+    return null;
   }
 
   static stopPlayingIfAny() {
@@ -418,14 +485,6 @@ export interface KodiOpenParams {
 export interface OpenMedia {
   movieIds?: BaseIds;
   showIds?: BaseIds;
-  /**
-   * @deprecated use movieIds
-   */
-  movieTraktId?: number;
-  /**
-   * @deprecated use showIds
-   */
-  showTraktId?: number;
   seasonNumber?: number;
   episodeNumber?: number;
   videoUrl?: string;

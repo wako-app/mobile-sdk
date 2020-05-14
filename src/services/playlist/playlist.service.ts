@@ -130,14 +130,7 @@ export class PlaylistService {
         return true;
       }
 
-      if (item.openMedia.movieTraktId && item.openMedia.movieTraktId === openMedia.movieTraktId) {
-        return true;
-      }
-
-      if (
-        (item.openMedia.showIds && isSameId(item.openMedia.showIds, openMedia.showIds)) ||
-        (item.openMedia.showTraktId && item.openMedia.showTraktId === openMedia.showTraktId)
-      ) {
+      if (item.openMedia.showIds && isSameId(item.openMedia.showIds, openMedia.showIds)) {
         return (
           openMedia.seasonNumber === item.openMedia.seasonNumber &&
           openMedia.episodeNumber === item.openMedia.episodeNumber
