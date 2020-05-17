@@ -58,6 +58,9 @@ export function mergeDeep(target, source) {
 }
 
 export function isSameId(sourceIds: BaseIds, targetIds: BaseIds) {
+  if (!sourceIds || !targetIds) {
+    return false;
+  }
   return (
     (sourceIds.trakt && targetIds.trakt && +sourceIds.trakt === +targetIds.trakt) ||
     (sourceIds.imdb && targetIds.imdb && sourceIds.imdb.toString() === targetIds.imdb.toString()) ||
