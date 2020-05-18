@@ -325,7 +325,13 @@ export class KodiAppService {
     );
   }
 
-  static openUrl(url: string, openMedia?: OpenMedia, openKodiRemote = true, params?: KodiOpenParams) {
+  static openUrl(
+    url: string,
+    openMedia?: OpenMedia,
+    openKodiRemote = true,
+    params?: KodiOpenParams,
+    prependOpenMediaToUrl = true
+  ) {
     return this.open(
       {
         file: this.prependOpenMediaToUrl(url, openMedia),
