@@ -334,7 +334,7 @@ export class KodiAppService {
   ) {
     return this.open(
       {
-        file: this.prependOpenMediaToUrl(url, openMedia),
+        file: prependOpenMediaToUrl ? this.prependOpenMediaToUrl(url, openMedia) : url,
       },
       openMedia,
       openKodiRemote
