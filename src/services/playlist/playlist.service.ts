@@ -140,4 +140,31 @@ export class PlaylistService {
 
     return videoUrl === item.url;
   }
+
+  getPlaylistIdFromOpenMedia(openMedia: OpenMedia) {
+    if (openMedia && (openMedia.movieIds || openMedia.showIds)) {
+      if (openMedia.movieIds) {
+        if (openMedia.movieIds.imdb) {
+          return 'movie_imdb_' + openMedia.movieIds.imdb;
+        } else if (openMedia.movieIds.trakt) {
+          return 'movie_trakt_' + openMedia.movieIds.trakt;
+        } else if (openMedia.movieIds.simkl) {
+          return 'movie_simkl_' + openMedia.movieIds.simkl;
+        }
+        return 'movie_ids_' + JSON.stringify(openMedia.movieIds);
+      }
+      if (openMedia.showIds) {
+        if (openMedia.showIds.imdb) {
+          return 'show_imdb_' + openMedia.showIds.imdb;
+        } else if (openMedia.showIds.trakt) {
+          return 'show_trakt_' + openMedia.showIds.trakt;
+        } else if (openMedia.showIds.simkl) {
+          return 'show_simkl_' + openMedia.showIds.simkl;
+        }
+        return 'show_ids_' + JSON.stringify(openMedia.movieIds);
+      }
+    }
+
+    return null;
+  }
 }
