@@ -8,12 +8,20 @@ export class WakoDebugService {
   static logs: WakoDebugLog[] = [];
 
   static log(category: string, ...data: any[]) {
-    console.log(`${new Date().toISOString()} - [${category}]:`, data.join(' '));
+    const logs = [];
+    for (const d of data) {
+      if (typeof d === 'object') {
+        logs.push(JSON.stringify(d));
+      } else {
+        logs.push(d);
+      }
+    }
+    console.log(`${new Date().toISOString()} - [${category}]:`, logs.join(' '));
 
     this.logs.push({
       category: category,
       date: new Date(),
-      data: data.join(' '),
+      data: logs.join(' '),
     });
   }
 }
