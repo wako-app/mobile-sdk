@@ -382,7 +382,7 @@ export class KodiAppService {
   }
 
   static getOpenMediaFromUrl(url: string) {
-    if (url && url.match('|')) {
+    if (url && url.match(/\|/) !== null) {
       const urlSearchParams = new URLSearchParams(url.split('|').pop());
       const openMedia: OpenMedia = {};
 
