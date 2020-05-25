@@ -289,6 +289,13 @@ export class KodiAppService {
     if (!openMedia) {
       return url;
     }
+
+    const openMediaInUrl = this.getOpenMediaFromUrl(url);
+
+    if (openMediaInUrl) {
+      return url;
+    }
+
     const urlParts = [];
     if (openMedia.movieIds) {
       urlParts.push(`movieIds=${JSON.stringify(openMedia.movieIds)}`);
