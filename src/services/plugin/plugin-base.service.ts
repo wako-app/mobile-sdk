@@ -1,6 +1,10 @@
 import { Movie } from '../../entities/movie';
 import { Show } from '../../entities/show';
 import { Episode } from '../../entities/episode';
+import { ExplorerFolderItem } from '../../entities/explorer/explorer-item';
+import { ExplorerFile } from '../../entities/explorer/explorer-file';
+import { KodiOpenParams, OpenMedia } from '../kodi/services/kodi-app.service';
+import { WakoFileActionButton } from '../app/wako-file-action.service';
 
 export abstract class PluginBaseService {
   /**
@@ -69,4 +73,22 @@ export abstract class PluginBaseService {
    * @param episode
    */
   abstract async afterEpisodeMiddleware(show: Show, episode: Episode): Promise<Episode>;
+
+  /**
+   * Method to retrieve ExplorerFolderItem if your plugin has the "file-explorer" action enabled
+   */
+  abstract fetchExplorerFolderItem(): Promise<ExplorerFolderItem>;
+
+  /**
+   * If the file you provide from fetchExplorerFolderItem() doesn't contains any link or streamLink then wako
+   * will call this method. Then you can return the list of WakoFileActionButton you want
+   */
+  abstract getFileActionButtons(
+    file: ExplorerFile,
+    title?: string,
+    posterUrl?: string,
+    seekTo?: number,
+    openMedia?: OpenMedia,
+    kodiOpenParams?: KodiOpenParams
+  ): Promise<WakoFileActionButton[]>;
 }

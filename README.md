@@ -17,5 +17,4 @@ For recent plugins compatible only with wako 4+ you don't need to fill in the `e
 
 ### Breaking changes
 
-- The ToastService has been removed and you must set up your own service.
 - The BrowserService.open is now a static method, it is no longer necessary to inject this service.

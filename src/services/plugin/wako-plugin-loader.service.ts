@@ -236,6 +236,9 @@ export class WakoPluginLoaderService {
             });
 
             this.setLang(pluginId, lang);
+
+            if (isFirstLoad) {
+            }
           })
         );
       }),
@@ -539,7 +542,8 @@ export declare type PluginAction =
   | 'before-show-middleware'
   | 'after-show-middleware'
   | 'before-episode-middleware'
-  | 'after-episode-middleware';
+  | 'after-episode-middleware'
+  | 'file-explorer';
 
 export class PluginDetail {
   manifest: PluginManifest;

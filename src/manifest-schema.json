@@ -43,11 +43,13 @@
           "before-show-middleware",
           "after-show-middleware",
           "before-episode-middleware",
-          "after-episode-middleware"
+          "after-episode-middleware",
+          "file-explorer"
         ]
       }
     },
     "entryPoint": {
+      "deprecated": true,
       "type": "string",
       "description": "Plugin javascript file. Could be a absolute URL or a relative one base on the manifest URL"
     },
