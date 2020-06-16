@@ -15,6 +15,7 @@ export interface ExplorerItem {
 
 export interface ExplorerFolderItem {
   isRoot: boolean;
+  title: string;
   label: string;
   parentId: string;
   folderId: string;

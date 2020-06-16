@@ -77,7 +77,7 @@ export abstract class PluginBaseService {
   /**
    * Method to retrieve ExplorerFolderItem if your plugin has the "file-explorer" action enabled
    */
-  abstract fetchExplorerFolderItem(): Promise<ExplorerFolderItem>;
+  abstract fetchExplorerFolderItem(): Promise<ExplorerFolderItem | ExplorerFolderItem[]>;
 
   /**
    * If the file you provide from fetchExplorerFolderItem() doesn't contains any link or streamLink then wako
