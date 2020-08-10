@@ -167,4 +167,8 @@ export class PlaylistService {
 
     return null;
   }
+
+  async clear() {
+    return await this.storage.remove(this.storageKey);
+  }
 }
