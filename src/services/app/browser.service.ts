@@ -1,30 +1,18 @@
-declare const SafariViewController: any;
-declare const cordova: any;
+import { Plugins } from '@capacitor/core';
+
+const { Browser, App } = Plugins;
 
 export class BrowserService {
-  static open(url: string, useSafariController = true) {
-    if (!useSafariController || typeof SafariViewController === 'undefined') {
-      cordova.InAppBrowser.open(url, '_system', 'location=yes');
+  static async open(url: string, useInAppBrowser = true) {
+    if (!useInAppBrowser) {
+      App.openUrl({
+        url: url,
+      });
       return;
     }
 
     const isDarkMode = document.body.classList.contains('dark');
 
-    SafariViewController.isAvailable((available) => {
-      if (available) {
-        SafariViewController.show({
-          url: url,
-          hidden: false,
-          animated: true,
-          transition: 'curl',
-          enterReaderModeIfAvailable: false,
-          barColor: isDarkMode ? '#000000' : '#1f2d3f',
-          tintColor: isDarkMode ? '#000000' : '#1f2d3f',
-          controlTintColor: '#ffffff',
-        });
-      } else {
-        cordova.InAppBrowser.open(url, '_system', 'location=yes');
-      }
-    });
+    await Browser.open({ url: url, toolbarColor: isDarkMode ? '#000000' : '#1f2d3f' });
   }
 }
