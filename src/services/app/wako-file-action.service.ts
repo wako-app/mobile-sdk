@@ -331,23 +331,23 @@ export class WakoFileActionService {
 
     const wakoUrl = `https://wako.app/player?${urlSearchParams.toString()}`;
 
-    BrowserService.open(wakoUrl);
+    await BrowserService.open(wakoUrl);
   }
 
   async playInVlc(link: string) {
     if (this.platform.is('ios')) {
       const url = `vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(link)}`;
-      BrowserService.open(url, false);
+      await BrowserService.open(url, false);
     } else {
       const url = `vlc://${link}`;
-      BrowserService.open(url, false);
+      await BrowserService.open(url, false);
     }
   }
 
   async downloadWithVlc(link: string) {
     if (this.platform.is('ios')) {
       const url = `vlc-x-callback://x-callback-url/download?url=${encodeURIComponent(link)}`;
-      BrowserService.open(url, false);
+      await BrowserService.open(url, false);
     }
   }
 
@@ -356,7 +356,7 @@ export class WakoFileActionService {
       return;
     }
     const url = `nplayer-${link}`;
-    BrowserService.open(url, false);
+    await BrowserService.open(url, false);
   }
 
   async playInInfuse(link: string) {
@@ -364,7 +364,7 @@ export class WakoFileActionService {
       return;
     }
     const url = `infuse://x-callback-url/play?url=${encodeURIComponent(link)}`;
-    BrowserService.open(url, false);
+    await BrowserService.open(url, false);
   }
 
   async cast(
@@ -393,7 +393,7 @@ export class WakoFileActionService {
     );
   }
 
-  private share(link: string, title: string) {
+  share(link: string, title: string) {
     if (window['plugins'] && window['plugins'].socialsharing) {
       window['plugins'].socialsharing.shareWithOptions({
         url: link,
@@ -402,7 +402,7 @@ export class WakoFileActionService {
     }
   }
 
-  private openWith(url: string, title: string) {
+  openWith(url: string, title: string) {
     if (window['plugins'] && window['plugins'].intentShim) {
       const intentShim: any = window['plugins'].intentShim;
 
