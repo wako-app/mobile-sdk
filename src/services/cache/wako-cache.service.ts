@@ -1,67 +1,33 @@
-import { map } from 'rxjs/operators';
-import { from } from 'rxjs';
 import { Storage } from '@ionic/storage';
+import { from } from 'rxjs';
 import { WakoStorageCacheConfig } from '../../config';
-import { PLATFORM_ID } from '@angular/core';
+import { WakoStorageService } from '../storage/wako-storage-service';
 
 export class WakoCacheService {
-  protected static storageEngine = new Storage(WakoStorageCacheConfig, PLATFORM_ID);
+  protected static wakoStorageEngine = new WakoStorageService(WakoStorageCacheConfig);
 
-  private static serialize(data: any, expiresAt: number) {
-    const d: CacheSerialized = {
-      data: data,
-      expiresAt: expiresAt,
-    };
+  /**
+   * Keep it for backward compatibility
+   */
+  protected static storageEngine: Storage;
 
-    return JSON.stringify(d);
-  }
-
-  private static unSerialize(string: string) {
-    try {
-      return JSON.parse(string) as CacheSerialized;
-    } catch (e) {
-      return null;
+  private static checkWakoStorageEngine() {
+    if (this.storageEngine) {
+      this.wakoStorageEngine.setStorage(this.storageEngine);
+      this.storageEngine = null;
     }
   }
 
-  private static hasExpired(data: CacheSerialized) {
-    return data.expiresAt < Date.now();
-  }
-
   static getCacheObject<T>(key: string) {
-    return from(this.storageEngine.get(key)).pipe(
-      map((data: string) => {
-        const cache = this.unSerialize(data);
+    this.checkWakoStorageEngine();
 
-        if (cache === null) {
-          return null;
-        }
-
-        return {
-          data: cache.data as T,
-          hasExpired: this.hasExpired(cache),
-          key: key,
-        };
-      })
-    );
+    return from(this.wakoStorageEngine.getStorageObject<T>(key));
   }
 
   static get<T>(key: string) {
-    return this.getCacheObject<T>(key).pipe(
-      map((cacheObject) => {
-        if (cacheObject === null) {
-          return null;
-        }
+    this.checkWakoStorageEngine();
 
-        if (cacheObject.hasExpired) {
-          console.log('key', key, 'has expired');
-          this.remove(cacheObject.key);
-          return null;
-        }
-
-        return cacheObject.data;
-      })
-    );
+    return from(this.wakoStorageEngine.get<T>(key));
   }
 
   /**
@@ -71,53 +37,28 @@ export class WakoCacheService {
    * @param expiresAt ie 15min 1h, 1d, 1m. h = hour, d = day, m = month or time
    */
   static set(key: string, data: any, expiresAt: string | number | 'tomorrow') {
-    const date = new Date();
+    this.checkWakoStorageEngine();
 
-    if (typeof expiresAt === 'number') {
-      date.setTime(date.getTime() + expiresAt);
-    } else if (typeof expiresAt === 'string') {
-      if (expiresAt === 'tomorrow') {
-        date.setHours(23);
-        date.setMinutes(59);
-        date.setSeconds(59);
-      } else if (expiresAt.match('min')) {
-        date.setMinutes(date.getMinutes() + parseFloat(expiresAt));
-      } else if (expiresAt.match('h')) {
-        date.setHours(date.getHours() + parseFloat(expiresAt));
-      } else if (expiresAt.match('d')) {
-        date.setDate(date.getDate() + parseFloat(expiresAt));
-      } else if (expiresAt.match('m')) {
-        date.setMonth(date.getMonth() + parseFloat(expiresAt));
-      }
-    }
-
-    return this.storageEngine.set(key, this.serialize(data, date.getTime())).catch((err) => {
-      console.log({ err });
-    });
+    return this.wakoStorageEngine.set(key, data, expiresAt);
   }
 
   static remove(key: string) {
-    return this.storageEngine.remove(key);
+    this.checkWakoStorageEngine();
+
+    return this.wakoStorageEngine.remove(key);
   }
 
   static clear() {
-    console.log('WakoCacheService clear');
-    return this.storageEngine.clear();
+    this.checkWakoStorageEngine();
+
+    return this.wakoStorageEngine.clear();
   }
 
   static async prune() {
-    console.log('WakoCacheService prune');
+    this.checkWakoStorageEngine();
 
-    const keys = await this.storageEngine.keys();
-    for (const key of keys) {
-      await this.get(key).toPromise();
-    }
+    await this.wakoStorageEngine.prune();
   }
-}
-
-interface CacheSerialized {
-  data: any;
-  expiresAt: number;
 }
 
 export interface CacheObject<T> {
