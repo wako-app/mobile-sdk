@@ -155,13 +155,13 @@ export class PlaylistService {
       }
       if (openMedia.showIds) {
         if (openMedia.showIds.imdb) {
-          return 'show_imdb_' + openMedia.showIds.imdb;
+          return 'show_imdb_' + openMedia.showIds.imdb + '_' + openMedia.seasonNumber;
         } else if (openMedia.showIds.trakt) {
-          return 'show_trakt_' + openMedia.showIds.trakt;
+          return 'show_trakt_' + openMedia.showIds.trakt + '_' + openMedia.seasonNumber;
         } else if (openMedia.showIds.simkl) {
-          return 'show_simkl_' + openMedia.showIds.simkl;
+          return 'show_simkl_' + openMedia.showIds.simkl + '_' + openMedia.seasonNumber;
         }
-        return 'show_ids_' + JSON.stringify(openMedia.movieIds);
+        return 'show_ids_' + JSON.stringify(openMedia.showIds);
       }
     }
 
