@@ -16,6 +16,7 @@ export interface BaseMediaRating {
 export interface BaseMediaRatings {
   imdb?: BaseMediaRating;
   trakt?: BaseMediaRating;
+  tmdb?: BaseMediaRating;
 }
 
 export interface BaseIds {
@@ -27,6 +28,7 @@ export interface BaseIds {
 }
 
 export interface BaseCommonMedia {
+  provider: 'trakt' | 'simkl' | 'tmdb';
   type: 'movie' | 'show' | 'anime' | 'season' | 'episode';
   title: string;
   overview: string;
