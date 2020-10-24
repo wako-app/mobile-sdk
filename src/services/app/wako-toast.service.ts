@@ -5,17 +5,17 @@ export class WakoToastService {
   constructor(private toastCtrl: ToastController, private translateService: TranslateService) {}
 
   simpleMessage(translateKey: string, interpolateParams?: any, duration = 2000, position = 'top') {
-    this.translateService.get(translateKey, interpolateParams).subscribe((message) => {
-      this.toastCtrl
-        .create({
-          message: message,
-          mode: 'ios',
-          position: position as any,
-          duration: duration,
-        })
-        .then((alert) => {
-          alert.present();
-        });
-    });
+    const message = this.translateService.instant(translateKey, interpolateParams);
+
+    this.toastCtrl
+      .create({
+        message: message,
+        mode: 'ios',
+        position: position as any,
+        duration: duration,
+      })
+      .then((alert) => {
+        alert.present();
+      });
   }
 }
