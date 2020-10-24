@@ -1,3 +1,5 @@
+import { PlaylistVideo } from './../../entities/playlist-video';
+import { PlaylistService } from './../playlist/playlist.service';
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { BrowserService } from './browser.service';
 import { KodiAppService, KodiOpenParams, OpenMedia } from '../kodi/services/kodi-app.service';
@@ -7,6 +9,7 @@ import { WakoSettingsService } from './wako-settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NEVER } from 'rxjs';
 import { WakoToastService } from './wako-toast.service';
+import { getEpisodeCode } from '../../tools/utils.tool';
 
 export declare type WakoFileAction =
   | 'play-kodi'
@@ -18,7 +21,8 @@ export declare type WakoFileAction =
   | 'open-with'
   | 'play-nplayer'
   | 'play-infuse'
-  | 'cast';
+  | 'cast'
+  | 'add-to-playlist';
 
 export const WakoFileActionIos: WakoFileAction[] = [
   'copy-url',
@@ -30,6 +34,7 @@ export const WakoFileActionIos: WakoFileAction[] = [
   'play-vlc',
   'play-kodi',
   'cast',
+  'add-to-playlist',
 ];
 
 export const WakoFileActionAndroid: WakoFileAction[] = [
@@ -40,6 +45,7 @@ export const WakoFileActionAndroid: WakoFileAction[] = [
   'play-vlc',
   'play-kodi',
   'cast',
+  'add-to-playlist',
 ];
 
 export const WakoDefaultFileActionIos: WakoFileAction[] = ['share-url', 'play-vlc', 'play-kodi', 'cast'];
@@ -50,6 +56,7 @@ export const WakoDefaultFileActionAndroid: WakoFileAction[] = [
   'play-vlc',
   'play-kodi',
   'cast',
+  'add-to-playlist',
 ];
 
 export interface WakoFileActionButton {
@@ -74,7 +81,8 @@ export class WakoFileActionService {
     private platform: Platform,
     private translateService: TranslateService,
     private actionSheetController: ActionSheetController,
-    private toastService: WakoToastService
+    private toastService: WakoToastService,
+    private playlistService: PlaylistService
   ) {}
 
   getAllActions() {
@@ -106,7 +114,8 @@ export class WakoFileActionService {
     posterUrl?: string,
     seekTo?: number,
     openMedia?: OpenMedia,
-    kodiOpenParams?: KodiOpenParams
+    kodiOpenParams?: KodiOpenParams,
+    excludeActions?: WakoFileAction[]
   ) {
     const buttons = await this.getFileActionButtons(
       link,
@@ -115,7 +124,9 @@ export class WakoFileActionService {
       posterUrl,
       seekTo,
       openMedia,
-      kodiOpenParams
+      kodiOpenParams,
+      null,
+      excludeActions
     );
 
     return await this.showActionSheetActions(buttons);
@@ -163,7 +174,8 @@ export class WakoFileActionService {
     seekTo?: number,
     openMedia?: OpenMedia,
     kodiOpenParams?: KodiOpenParams,
-    actions?: WakoFileAction[]
+    actions?: WakoFileAction[],
+    excludeActions?: WakoFileAction[]
   ) {
     const settings = await this.getSettings();
 
@@ -182,6 +194,10 @@ export class WakoFileActionService {
     const buttons: WakoFileActionButton[] = [];
 
     actions.forEach((action) => {
+      if (excludeActions && excludeActions.includes(action)) {
+        return;
+      }
+
       const fileActionButton: WakoFileActionButton = {
         action: action,
         text: this.translateService.instant('actionSheets.file-action.actions.' + action),
@@ -264,6 +280,11 @@ export class WakoFileActionService {
         case 'share-url':
           fileActionButton.icon = 'share';
           fileActionButton.handler = () => this.share(link, title);
+          break;
+
+        case 'add-to-playlist':
+          fileActionButton.icon = 'list';
+          fileActionButton.handler = () => this.addToPlaylist(link, title, openMedia, posterUrl);
           break;
       }
 
@@ -419,5 +440,42 @@ export class WakoFileActionService {
         (err) => console.log('intentShim err', err)
       );
     }
+  }
+
+  async addToPlaylist(url: string, title: string, openMedia?: OpenMedia, poster?: string) {
+    const playlistId = openMedia ? this.playlistService.getPlaylistIdFromOpenMedia(openMedia) : title;
+
+    let playlist = await this.playlistService.get(playlistId);
+
+    let playlistLabel = title;
+    if (openMedia && openMedia.seasonNumber) {
+      const episodeCode = getEpisodeCode(openMedia.seasonNumber, openMedia.episodeNumber);
+      if (playlistLabel.match(episodeCode) !== null) {
+        playlistLabel = playlistLabel.replace(getEpisodeCode(openMedia.seasonNumber, openMedia.episodeNumber), '');
+        playlistLabel += ' ' + getEpisodeCode(openMedia.seasonNumber);
+      }
+    }
+    const playlistVideo: PlaylistVideo = {
+      url: url,
+      label: title,
+      currentSeconds: 0,
+      openMedia: openMedia,
+    };
+
+    if (playlist) {
+      this.playlistService.addPlaylistItems(playlistId, [playlistVideo], true);
+    } else {
+      playlist = {
+        id: openMedia ? this.playlistService.getPlaylistIdFromOpenMedia(openMedia) : title,
+        label: playlistLabel,
+        currentItem: 0,
+        poster: poster,
+        updatedAt: new Date().toISOString(),
+        items: [playlistVideo],
+      };
+      this.playlistService.addOrUpdate(playlist, true);
+    }
+
+    this.toastService.simpleMessage('toasts.playlist-add');
   }
 }

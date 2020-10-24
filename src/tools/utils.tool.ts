@@ -69,3 +69,11 @@ export function isSameId(sourceIds: BaseIds, targetIds: BaseIds) {
     (sourceIds.simkl && targetIds.simkl && +sourceIds.simkl === +targetIds.simkl)
   );
 }
+
+export function getEpisodeCode(seasonNumber: number, episodeNumber?: number) {
+  return (
+    'S' +
+    seasonNumber.toString().padStart(2, '0') +
+    (episodeNumber ? 'E' + episodeNumber.toString().padStart(2, '0') : '')
+  );
+}
