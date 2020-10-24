@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 import { Playlist } from '../../entities/playlist';
 import { Storage } from '@ionic/storage';
 import { PlaylistVideo } from '../../entities/playlist-video';
@@ -5,6 +6,8 @@ import { OpenMedia } from '../kodi/services/kodi-app.service';
 import { isSameId } from '../../tools/utils.tool';
 
 export class PlaylistService {
+  change$ = new Subject<boolean>();
+
   private storageKey = 'wako_playlist_items';
 
   private static instance: PlaylistService;
@@ -58,7 +61,7 @@ export class PlaylistService {
     return playlists.find((playlist) => playlist.id === id);
   }
 
-  async addOrUpdate(playlist: Playlist) {
+  async addOrUpdate(playlist: Playlist, emitEvent = false) {
     await this.delete(playlist.id);
 
     const playlists = await this.getPlaylistsFromStorage();
@@ -66,9 +69,13 @@ export class PlaylistService {
     playlists.push(playlist);
 
     await this.setPlaylistsInStorage(playlists);
+
+    if (emitEvent) {
+      this.change$.next(true);
+    }
   }
 
-  async addPlaylistItems(id: string, playlistVideos: PlaylistVideo[]) {
+  async addPlaylistItems(id: string, playlistVideos: PlaylistVideo[], emitEvent = false) {
     const playlists = await this.getPlaylistsFromStorage();
     const playlist = playlists.find((item) => item.id === id);
 
@@ -76,6 +83,10 @@ export class PlaylistService {
       playlist.updatedAt = new Date().toISOString();
       playlist.items.push(...playlistVideos);
       await this.setPlaylistsInStorage(playlists);
+    }
+
+    if (emitEvent) {
+      this.change$.next(true);
     }
   }
 

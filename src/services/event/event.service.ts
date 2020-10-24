@@ -60,6 +60,10 @@ export const EventCategory = {
   searchSource: 'SearchSource',
   kodiRemote: 'KodiRemote',
   kodi: 'kodi',
+  /**
+   * @deprecated
+   * Use change$ event in playlistService
+   */
   playlist: 'playlist',
 };
 
