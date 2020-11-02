@@ -11,12 +11,12 @@ export class KodiWsService {
 
   static connected$ = new ReplaySubject<boolean>(1);
 
+  static onError$ = new Subject<any>();
+
   static isConnected = false;
 
   static connect(config: KodiHostStructure) {
-    const apiBaseUrl = `ws://${config.host}:${
-      config.wsPort ? config.wsPort : 9090
-    }/jsonrpc`;
+    const apiBaseUrl = `ws://${config.host}:${config.wsPort ? config.wsPort : 9090}/jsonrpc`;
 
     if (this.currentWebSocket) {
       this.currentWebSocket.close();
@@ -39,6 +39,10 @@ export class KodiWsService {
       this.wsMessage$.next(JSON.parse(ev.data));
     };
 
+    this.currentWebSocket.onerror = (error) => {
+      this.onError$.next(error);
+    };
+
     return this.currentWebSocket;
   }
 
@@ -56,7 +60,7 @@ export class KodiWsService {
     const action: KodiAction = {
       jsonrpc: '2.0',
       id: 1,
-      method: method
+      method: method,
     };
 
     if (params) {

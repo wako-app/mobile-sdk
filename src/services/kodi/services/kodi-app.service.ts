@@ -94,7 +94,7 @@ export class KodiAppService {
 
     this.wsConnection = KodiApiService.connect(this.currentHost);
 
-    this.wsConnection.onerror = (error) => {
+    KodiApiService.onError$.subscribe((error) => {
       wakoLog('mobile-sdk.KodiAppService::onerror', error);
 
       // Checks if the host is HTTP reachable
@@ -106,14 +106,10 @@ export class KodiAppService {
           isWsConnected: this.isWsConnected,
         });
       });
-    };
+    });
   }
 
   static disconnect() {
-    if (this.wsConnection) {
-      this.wsConnection.onerror = null;
-    }
-
     KodiApiService.disconnect();
 
     this.isConnected = false;
