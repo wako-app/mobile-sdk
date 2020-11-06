@@ -1,7 +1,7 @@
 import { KodiHostStructure } from '../structures/kodi-host.structure';
-import { ReplaySubject, Subject } from 'rxjs';
+import { ReplaySubject, Subject, throwError, of } from 'rxjs';
 import { KodiAction } from './kodi-http.service';
-import { first } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 import { wakoLog } from '../../../tools/utils.tool';
 
 export class KodiWsService {
@@ -25,22 +25,44 @@ export class KodiWsService {
     this.currentWebSocket = new WebSocket(apiBaseUrl);
 
     this.currentWebSocket.onopen = () => {
-      this.connected$.next(true);
-      this.isConnected = true;
-      wakoLog('KODI', 'Connected to: ' + apiBaseUrl);
+      wakoLog('KodiWsService', 'onopen - Connected to: ' + apiBaseUrl + ' - lets ping it');
+
+      this.isKodiWebsocketHost().subscribe(
+        () => {
+          this.connected$.next(true);
+          this.isConnected = true;
+
+          wakoLog('KodiWsService', apiBaseUrl + ' is a kodi websocket host');
+        },
+        () => {
+          this.currentWebSocket.close();
+
+          wakoLog('KodiWsService', apiBaseUrl + ' is a not kodi websocket host');
+        }
+      );
     };
+
     this.currentWebSocket.onclose = () => {
       this.isConnected = false;
       this.connected$.next(false);
-      wakoLog('KODI', 'Connected to: ' + apiBaseUrl);
+      wakoLog('KodiWsService', 'onclose - Close connection to: ' + apiBaseUrl);
     };
 
     this.currentWebSocket.onmessage = (ev: MessageEvent) => {
-      this.wsMessage$.next(JSON.parse(ev.data));
+      let data = ev.data;
+      try {
+        data = JSON.parse(ev.data);
+      } catch (e) {
+        wakoLog('KodiWsService', 'onmessage - Cannot parse data - ' + ev.data);
+      }
+
+      this.wsMessage$.next(data);
     };
 
     this.currentWebSocket.onerror = (error) => {
       this.onError$.next(error);
+
+      wakoLog('KodiWsService', 'onerror - ' + apiBaseUrl + ' ' + JSON.stringify(error));
     };
 
     return this.currentWebSocket;
@@ -69,6 +91,22 @@ export class KodiWsService {
     this.currentWebSocket.send(JSON.stringify(action));
 
     return this.wsMessage$.pipe(first());
+  }
+
+  private static isKodiWebsocketHost() {
+    return this.send('JSONRPC.Ping').pipe(
+      switchMap((message) => {
+        const data = message.result;
+
+        wakoLog('KodiWsService', 'Response from isKodiWebsocketHost: ' + data);
+
+        if (data !== 'pong') {
+          return throwError('not a kodi host');
+        }
+
+        return of(true);
+      })
+    );
   }
 }
 

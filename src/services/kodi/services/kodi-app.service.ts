@@ -1,5 +1,5 @@
 import { concat, from, Observable, of, ReplaySubject, Subject, throwError, timer } from 'rxjs';
-import { distinctUntilChanged, map, mapTo, switchMap, takeUntil } from 'rxjs/operators';
+import { map, mapTo, switchMap, takeUntil, catchError } from 'rxjs/operators';
 import { wakoLog } from '../../../tools/utils.tool';
 import { KodiHostStructure } from '../structures/kodi-host.structure';
 import { KodiApiService } from './kodi-api.service';
@@ -51,20 +51,34 @@ export class KodiAppService {
 
     this.isInitialized = true;
 
-    KodiApiService.connected$.pipe(distinctUntilChanged()).subscribe((connected) => {
+    KodiApiService.connected$.subscribe((connectedToWebsocket) => {
       if (this.appInBackground) {
         return;
       }
 
-      wakoLog('mobile-sdk.KodiAppService::connected', connected);
+      wakoLog('KodiAppService::connectedToWebsocket', connectedToWebsocket);
 
-      this.isConnected = connected;
-      this.isWsConnected = connected;
+      this.isWsConnected = connectedToWebsocket;
 
-      this.connected$.next({
-        isConnected: this.isConnected,
-        isWsConnected: this.isWsConnected,
-      });
+      if (!connectedToWebsocket || !this.isConnected) {
+        this.isHostHttpReachable().subscribe((isHostHttpReachable) => {
+          wakoLog('KodiAppService::isHostHttpReachable', isHostHttpReachable);
+
+          this.isConnected = isHostHttpReachable;
+
+          this.connected$.next({
+            host: this.currentHost,
+            isConnected: this.isConnected,
+            isWsConnected: this.isWsConnected,
+          });
+        });
+      } else {
+        this.connected$.next({
+          host: this.currentHost,
+          isConnected: this.isConnected,
+          isWsConnected: this.isWsConnected,
+        });
+      }
     });
   }
 
@@ -90,23 +104,37 @@ export class KodiAppService {
   }
 
   static connect() {
+    wakoLog('KodiAppService::connect', `let's connect to ${JSON.stringify(this.currentHost)}`);
+
     this.initialize();
 
     this.wsConnection = KodiApiService.connect(this.currentHost);
 
     KodiApiService.onError$.subscribe((error) => {
-      wakoLog('mobile-sdk.KodiAppService::onerror', error);
+      wakoLog('KodiAppService::onerror', error);
 
-      // Checks if the host is HTTP reachable
-      KodiPingForm.submit().subscribe((data) => {
-        this.isConnected = data === 'pong';
+      this.isHostHttpReachable().subscribe((isReachable) => {
+        wakoLog('KodiAppService::onerror::isHostHttpReachable', isReachable);
+
+        this.isConnected = isReachable;
 
         this.connected$.next({
+          host: this.currentHost,
           isConnected: this.isConnected,
           isWsConnected: this.isWsConnected,
         });
       });
     });
+  }
+
+  private static isHostHttpReachable() {
+    // Checks if the host is HTTP reachable
+    return KodiPingForm.submit().pipe(
+      catchError(() => {
+        return of(null);
+      }),
+      map((data) => data === 'pong')
+    );
   }
 
   static disconnect() {
@@ -115,6 +143,7 @@ export class KodiAppService {
     this.isConnected = false;
 
     this.connected$.next({
+      host: this.currentHost,
       isConnected: this.isConnected,
       isWsConnected: this.isWsConnected,
     });
@@ -441,23 +470,35 @@ export class KodiAppService {
       const playerIdSet$ = new Subject<boolean>();
       let timer = null;
 
-      KodiApiService.wsMessage$.pipe(takeUntil(playerIdSet$)).subscribe((data) => {
-        if (data.method === 'Player.OnAVStart') {
-          if (timer) {
-            clearTimeout(timer);
-          }
-          observer.next(data.params.data.player.playerid);
-          observer.complete();
-        }
-
-        if (kodiMajorVersion && kodiMajorVersion < 18 && data.method === 'Player.OnPlay') {
-          // < kodi 18
-          timer = setTimeout(() => {
+      if (this.isWsConnected) {
+        KodiApiService.wsMessage$.pipe(takeUntil(playerIdSet$)).subscribe((data) => {
+          if (data.method === 'Player.OnAVStart') {
+            if (timer) {
+              clearTimeout(timer);
+            }
             observer.next(data.params.data.player.playerid);
             observer.complete();
-          }, 3000);
-        }
-      });
+          }
+
+          if (kodiMajorVersion && kodiMajorVersion < 18 && data.method === 'Player.OnPlay') {
+            // < kodi 18
+            timer = setTimeout(() => {
+              observer.next(data.params.data.player.playerid);
+              observer.complete();
+            }, 3000);
+          }
+        });
+      } else {
+        const interval = setInterval(() => {
+          KodiPlayerGetAllActiveForm.submit().subscribe((playerIds) => {
+            if (playerIds && playerIds.length) {
+              clearInterval(interval);
+              observer.next(playerIds.pop().playerid);
+              observer.complete();
+            }
+          });
+        }, 1000);
+      }
     });
   }
 
@@ -501,6 +542,7 @@ export interface OpenMedia {
 }
 
 export interface KodiConnected {
+  host: KodiHostStructure;
   isConnected: boolean;
   isWsConnected: boolean;
 }
