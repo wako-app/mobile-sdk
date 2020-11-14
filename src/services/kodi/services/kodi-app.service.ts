@@ -185,7 +185,7 @@ export class KodiAppService {
 
     await WakoSettingsService.setByCategory(this.storageCategoryCurrentHostIndex, hostIndex);
 
-    this.connectToDefaultHost();
+    await this.connectToDefaultHost();
 
     return host;
   }
