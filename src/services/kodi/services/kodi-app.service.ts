@@ -1,3 +1,4 @@
+import { KodiHttpService } from './kodi-http.service';
 import { concat, from, Observable, of, ReplaySubject, Subject, throwError, timer } from 'rxjs';
 import { map, mapTo, switchMap, takeUntil, catchError } from 'rxjs/operators';
 import { wakoLog } from '../../../tools/utils.tool';
@@ -7,7 +8,6 @@ import { KodiPlayerOpenForm } from '../forms/player/kodi-player-open.form';
 import { EventCategory, EventName, EventService } from '../../event/event.service';
 import { KodiPlayerGetAllActiveForm } from '../forms/player/kodi-player-get-all-active.form';
 import { KodiPlayerStopForm } from '../forms/player/kodi-player-stop.form';
-import { KodiPingForm } from '../forms/ping/kodi-ping.form';
 import { PlaylistVideo } from '../../../entities/playlist-video';
 import { PlaylistService } from '../../playlist/playlist.service';
 import { KodiSeekToCommand } from '../commands/kodi-seek-to.command';
@@ -80,6 +80,22 @@ export class KodiAppService {
         });
       }
     });
+
+    KodiApiService.onError$.subscribe((error) => {
+      wakoLog('KodiAppService::onerror', error);
+
+      this.isHostHttpReachable().subscribe((isReachable) => {
+        wakoLog('KodiAppService::onerror::isHostHttpReachable', isReachable);
+
+        this.isConnected = isReachable;
+
+        this.connected$.next({
+          host: this.currentHost,
+          isConnected: this.isConnected,
+          isWsConnected: this.isWsConnected,
+        });
+      });
+    });
   }
 
   static async connectToDefaultHost() {
@@ -109,27 +125,11 @@ export class KodiAppService {
     this.initialize();
 
     this.wsConnection = KodiApiService.connect(this.currentHost);
-
-    KodiApiService.onError$.subscribe((error) => {
-      wakoLog('KodiAppService::onerror', error);
-
-      this.isHostHttpReachable().subscribe((isReachable) => {
-        wakoLog('KodiAppService::onerror::isHostHttpReachable', isReachable);
-
-        this.isConnected = isReachable;
-
-        this.connected$.next({
-          host: this.currentHost,
-          isConnected: this.isConnected,
-          isWsConnected: this.isWsConnected,
-        });
-      });
-    });
   }
 
   private static isHostHttpReachable() {
     // Checks if the host is HTTP reachable
-    return KodiPingForm.submit().pipe(
+    return KodiHttpService.doAction<string>('JSONRPC.Ping', null, 1000).pipe(
       catchError(() => {
         return of(null);
       }),
@@ -268,8 +268,8 @@ export class KodiAppService {
     if (!this.isConnected) {
       this.connectToDefaultHost();
     } else {
-      KodiPingForm.submit().subscribe((data) => {
-        if (data === 'pong') {
+      this.isHostHttpReachable().subscribe((isHostHttpReachable) => {
+        if (isHostHttpReachable) {
           this.connect();
         } else {
           this.disconnect();

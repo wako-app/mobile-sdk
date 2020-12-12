@@ -1,7 +1,8 @@
-import { KodiHostStructure } from "../structures/kodi-host.structure";
-import { KodiHttpService } from "./kodi-http.service";
-import { map, tap } from "rxjs/operators";
-import { KodiWsService } from "./kodi-ws.service";
+import { throwError } from 'rxjs';
+import { KodiHostStructure } from '../structures/kodi-host.structure';
+import { KodiHttpService } from './kodi-http.service';
+import { map, tap, catchError } from 'rxjs/operators';
+import { KodiWsService } from './kodi-ws.service';
 
 export class KodiApiService extends KodiWsService {
   static host: KodiHostStructure;
@@ -22,7 +23,14 @@ export class KodiApiService extends KodiWsService {
   }
 
   static doHttpAction<T>(method: string, params?: any, timeoutMs = 10000) {
-    return KodiHttpService.doAction<T>(method, params, timeoutMs);
+    return KodiHttpService.doAction<T>(method, params, timeoutMs).pipe(
+      catchError((err) => {
+        if (err && (err.status === undefined || err.status < 0)) {
+          this.disconnect();
+        }
+        return throwError(err);
+      })
+    );
   }
 
   static doAction<T>(method: string, params?: any) {
@@ -37,7 +45,7 @@ export class KodiApiService extends KodiWsService {
 
     return obs.pipe(
       tap((data) => {
-        console.log("method", method, data);
+        console.log('method', method, data);
       })
     );
   }
