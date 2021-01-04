@@ -7,15 +7,12 @@ declare const cordova: any;
 export class WakoHttpService {
   static isMobileDevice: boolean;
 
-  static request(
-    httpRequest: WakoHttpRequest,
-    byPassCors = true
-  ): Observable<WakoHttpResponse> {
+  static request(httpRequest: WakoHttpRequest, byPassCors = true): Observable<WakoHttpResponse> {
     let obs: Observable<WakoHttpResponse>;
 
     if (this.isMobileDevice && byPassCors) {
       obs = this.mobileRequest(httpRequest).pipe(
-        catchError(err => {
+        catchError((err) => {
           if (err instanceof WakoHttpError && err.status === 301) {
             wakoLog('WakoHttpService', `Re Run ${httpRequest.url}`);
             return this.mobileRequest(httpRequest);
@@ -28,31 +25,23 @@ export class WakoHttpService {
     }
 
     return obs.pipe(
-      map(response => {
+      map((response) => {
         if (response.status >= 200 && response.status <= 299) {
           return response;
         }
-        throw new WakoHttpError(
-          httpRequest,
-          response.status,
-          response.responseType,
-          response.response
-        );
+        throw new WakoHttpError(httpRequest, response.status, response.responseType, response.response);
       })
     );
   }
 
-  private static mobileRequest(
-    httpRequest: WakoHttpRequest
-  ): Observable<WakoHttpResponse> {
+  private static mobileRequest(httpRequest: WakoHttpRequest): Observable<WakoHttpResponse> {
     return defer(() => {
       const contentType = httpRequest.headers['Content-Type'];
 
       let serializer = 'json';
       if (contentType) {
         // This has been added to handle weird form. But it should be generic to handle all case
-        httpRequest.headers['content-type'] =
-          httpRequest.headers['Content-Type'];
+        httpRequest.headers['content-type'] = httpRequest.headers['Content-Type'];
 
         if (contentType === 'application/x-www-form-urlencoded') {
           serializer = 'urlencoded';
@@ -70,14 +59,11 @@ export class WakoHttpService {
             responseText: response.data,
             status: response.status,
             responseType: httpRequest.responseType,
-            response: response
+            response: response,
           } as WakoHttpResponse;
 
           try {
-            ajaxResponse.response =
-              ajaxResponse.responseType === 'json'
-                ? JSON.parse(response.data)
-                : response.data;
+            ajaxResponse.response = ajaxResponse.responseType === 'json' ? JSON.parse(response.data) : response.data;
           } catch (e) {
             ajaxResponse.response = response.data;
           }
@@ -88,51 +74,23 @@ export class WakoHttpService {
         const failure = (response: CordovaHttpFailure) => {
           let error = response.error;
           try {
-            error =
-              httpRequest.responseType === 'json'
-                ? JSON.parse(response.error)
-                : response.error;
+            error = httpRequest.responseType === 'json' ? JSON.parse(response.error) : response.error;
           } catch (e) {
             error = response.error;
           }
 
-          reject(
-            new WakoHttpError(
-              httpRequest,
-              response.status,
-              httpRequest.responseType,
-              error
-            )
-          );
+          reject(new WakoHttpError(httpRequest, response.status, httpRequest.responseType, error));
         };
 
         if (httpRequest.method === 'GET') {
-          cordova['plugin']['http'].get(
-            httpRequest.url,
-            {},
-            httpRequest.headers,
-            success,
-            failure
-          );
+          cordova['plugin']['http'].get(httpRequest.url, {}, httpRequest.headers, success, failure);
         } else if (httpRequest.method === 'POST') {
           if (httpRequest.body === null) {
             httpRequest.body = {};
           }
-          cordova['plugin']['http'].post(
-            httpRequest.url,
-            httpRequest.body,
-            httpRequest.headers,
-            success,
-            failure
-          );
+          cordova['plugin']['http'].post(httpRequest.url, httpRequest.body, httpRequest.headers, success, failure);
         } else if (httpRequest.method === 'DELETE') {
-          cordova['plugin']['http'].delete(
-            httpRequest.url,
-            httpRequest.body,
-            httpRequest.headers,
-            success,
-            failure
-          );
+          cordova['plugin']['http'].delete(httpRequest.url, httpRequest.body, httpRequest.headers, success, failure);
         } else {
           throw new Error('httpRequest.method  not set');
         }
@@ -140,12 +98,10 @@ export class WakoHttpService {
     });
   }
 
-  private static browserRequest(
-    httpRequest: WakoHttpRequest
-  ): Observable<WakoHttpResponse> {
+  private static browserRequest(httpRequest: WakoHttpRequest): Observable<WakoHttpResponse> {
     const headers = new Headers();
     if (httpRequest.headers) {
-      Object.keys(httpRequest.headers).forEach(key => {
+      Object.keys(httpRequest.headers).forEach((key) => {
         headers.set(key, httpRequest.headers[key]);
       });
     }
@@ -158,7 +114,7 @@ export class WakoHttpService {
         if (contentType === 'application/x-www-form-urlencoded') {
           if (httpRequest.body) {
             const urlSearchParams = new URLSearchParams();
-            Object.keys(httpRequest.body).forEach(key => {
+            Object.keys(httpRequest.body).forEach((key) => {
               urlSearchParams.set(key, httpRequest.body[key]);
             });
             body = urlSearchParams.toString();
@@ -171,7 +127,7 @@ export class WakoHttpService {
       return fetch(httpRequest.url, {
         method: httpRequest.method,
         body: body,
-        headers: headers
+        headers: headers,
       }).then(
         (response: Response) => {
           const ajaxResponse = <WakoHttpResponse>{
@@ -179,23 +135,21 @@ export class WakoHttpService {
             responseText: null,
             status: response.status,
             responseType: httpRequest.responseType,
-            response: response
+            response: response,
           };
           const contentType = response.headers.get('content-type');
 
           if (contentType && contentType.includes('application/json')) {
-            return response.json().then(json => {
+            return response.json().then((json) => {
               ajaxResponse.response = json;
 
               return ajaxResponse;
             });
           } else {
-            return response.text().then(text => {
+            return response.text().then((text) => {
               try {
                 ajaxResponse.response =
-                  httpRequest.responseType === 'json' && text.length > 0
-                    ? JSON.parse(text)
-                    : text;
+                  httpRequest.responseType === 'json' && text.length > 0 ? JSON.parse(text) : text;
               } catch (e) {
                 ajaxResponse.response = text;
               }
@@ -204,13 +158,8 @@ export class WakoHttpService {
             });
           }
         },
-        response => {
-          throw new WakoHttpError(
-            httpRequest,
-            response.status,
-            httpRequest.responseType,
-            response.error
-          );
+        (response) => {
+          throw new WakoHttpError(httpRequest, response.status, httpRequest.responseType, response.error);
         }
       );
     });
@@ -226,9 +175,7 @@ export class WakoHttpService {
         }
       }
 
-      url +=
-        (url.match(/\?/) ? '&' : '?') +
-        decodeURIComponent(searchParams.toString()).replace(/’/gi, "'");
+      url += (url.match(/\?/) ? '&' : '?') + searchParams.toString().replace(/’/gi, "'");
     }
 
     return url;
