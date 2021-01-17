@@ -1,15 +1,15 @@
-import { PlaylistVideo } from './../../entities/playlist-video';
-import { PlaylistService } from './../playlist/playlist.service';
 import { ActionSheetController, Platform } from '@ionic/angular';
-import { BrowserService } from './browser.service';
-import { KodiAppService, KodiOpenParams, OpenMedia } from '../kodi/services/kodi-app.service';
-import { ChromecastService } from '../chromecast/chromecast.service';
-import { catchError, switchMap } from 'rxjs/operators';
-import { WakoSettingsService } from './wako-settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NEVER } from 'rxjs';
-import { WakoToastService } from './wako-toast.service';
+import { catchError, switchMap } from 'rxjs/operators';
 import { getEpisodeCode } from '../../tools/utils.tool';
+import { ChromecastService } from '../chromecast/chromecast.service';
+import { KodiAppService, KodiOpenParams, OpenMedia } from '../kodi/services/kodi-app.service';
+import { PlaylistVideo } from './../../entities/playlist-video';
+import { PlaylistService } from './../playlist/playlist.service';
+import { BrowserService } from './browser.service';
+import { WakoSettingsService } from './wako-settings.service';
+import { WakoToastService } from './wako-toast.service';
 
 export declare type WakoFileAction =
   | 'play-kodi'
@@ -115,7 +115,8 @@ export class WakoFileActionService {
     seekTo?: number,
     openMedia?: OpenMedia,
     kodiOpenParams?: KodiOpenParams,
-    excludeActions?: WakoFileAction[]
+    excludeActions?: WakoFileAction[],
+    playlistId?: string
   ) {
     const buttons = await this.getFileActionButtons(
       link,
@@ -126,7 +127,8 @@ export class WakoFileActionService {
       openMedia,
       kodiOpenParams,
       null,
-      excludeActions
+      excludeActions,
+      playlistId
     );
 
     return await this.showActionSheetActions(buttons);
@@ -175,7 +177,8 @@ export class WakoFileActionService {
     openMedia?: OpenMedia,
     kodiOpenParams?: KodiOpenParams,
     actions?: WakoFileAction[],
-    excludeActions?: WakoFileAction[]
+    excludeActions?: WakoFileAction[],
+    playlistId?: string
   ) {
     const settings = await this.getSettings();
 
@@ -284,7 +287,7 @@ export class WakoFileActionService {
 
         case 'add-to-playlist':
           fileActionButton.icon = 'list';
-          fileActionButton.handler = () => this.addToPlaylist(link, title, openMedia, posterUrl);
+          fileActionButton.handler = () => this.addToPlaylist(link, title, openMedia, posterUrl, playlistId);
           break;
       }
 
@@ -442,8 +445,10 @@ export class WakoFileActionService {
     }
   }
 
-  async addToPlaylist(url: string, title: string, openMedia?: OpenMedia, poster?: string) {
-    const playlistId = openMedia ? this.playlistService.getPlaylistIdFromOpenMedia(openMedia) : title;
+  async addToPlaylist(url: string, title: string, openMedia?: OpenMedia, poster?: string, playlistId?: string) {
+    if (!playlistId) {
+      playlistId = openMedia ? this.playlistService.getPlaylistIdFromOpenMedia(openMedia) : title;
+    }
 
     let playlist = await this.playlistService.get(playlistId);
 
@@ -466,7 +471,7 @@ export class WakoFileActionService {
       this.playlistService.addPlaylistItems(playlistId, [playlistVideo], true);
     } else {
       playlist = {
-        id: openMedia ? this.playlistService.getPlaylistIdFromOpenMedia(openMedia) : title,
+        id: playlistId,
         label: playlistLabel,
         currentItem: 0,
         poster: poster,
