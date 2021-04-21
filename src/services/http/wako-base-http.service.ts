@@ -1,22 +1,9 @@
-import { catchError, finalize, map, share, timeout } from 'rxjs/operators';
-import {
-  EMPTY,
-  NEVER,
-  Observable,
-  Observer,
-  of,
-  throwError,
-  timer
-} from 'rxjs';
+import { EMPTY, NEVER, Observable, Observer, of, throwError } from 'rxjs';
 import { AjaxRequest } from 'rxjs/ajax';
-import {
-  WakoHttpError,
-  WakoHttpRequest,
-  WakoHttpResponse,
-  WakoHttpService
-} from './wako-http.service';
-import { CacheObject, WakoCacheService } from '../cache/wako-cache.service';
+import { catchError, finalize, map, share, timeout } from 'rxjs/operators';
 import { getDomainFromUrl } from '../../tools/utils.tool';
+import { CacheObject, WakoCacheService } from '../cache/wako-cache.service';
+import { WakoHttpError, WakoHttpRequest, WakoHttpResponse, WakoHttpService } from './wako-http.service';
 
 interface QueueItem {
   observer: Observer<any>;
@@ -30,6 +17,7 @@ export abstract class WakoBaseHttpService {
   private static token: string;
 
   private static domainQueueItems = new Map<string, QueueItem[]>();
+  private static domainQueuePendingItems = new Map<string, QueueItem[]>();
 
   static queueEnabled = false;
 
@@ -45,11 +33,19 @@ export abstract class WakoBaseHttpService {
     return this.domainQueueItems.get(domain);
   }
 
+  private static getQueuePendingItemsByDomain(domain): QueueItem[] {
+    if (!this.domainQueuePendingItems.has(domain)) {
+      this.domainQueuePendingItems.set(domain, []);
+    }
+
+    return this.domainQueuePendingItems.get(domain);
+  }
+
   protected static getCacheService() {
     return WakoCacheService;
   }
 
-  protected static getTimeToWaitOnTooManyRequest() {
+  protected static getTimeToWaitOnTooManyRequest(httpRequest: WakoHttpRequest, err: any) {
     return 5000;
   }
 
@@ -58,7 +54,7 @@ export abstract class WakoBaseHttpService {
   }
 
   protected static getSimultaneousRequest() {
-    return 1;
+    return 10;
   }
 
   protected static getApiBaseUrl() {
@@ -79,9 +75,7 @@ export abstract class WakoBaseHttpService {
 
   static unHandleError(err: any) {
     if (err instanceof WakoHttpError) {
-      console.error(
-        `Unhandled error: ${err.status} ${err.request.method} ${err.request.url}`
-      );
+      console.error(`Unhandled error: ${err.status} ${err.request.method} ${err.request.url}`);
     } else if (err && err.name === 'TimeoutError') {
       return EMPTY;
     }
@@ -89,21 +83,14 @@ export abstract class WakoBaseHttpService {
     return throwError(err);
   }
 
-  protected static getObservableKey(
-    ajaxRequest: AjaxRequest,
-    includeHeaders = false
-  ) {
+  protected static getObservableKey(ajaxRequest: AjaxRequest, includeHeaders = false) {
     const headerStr =
-      includeHeaders &&
-      ajaxRequest.headers &&
-      Object.keys(ajaxRequest.headers).length > 0
+      includeHeaders && ajaxRequest.headers && Object.keys(ajaxRequest.headers).length > 0
         ? '_h:' + JSON.stringify(ajaxRequest.headers)
         : '';
 
     const bodyStr =
-      ajaxRequest.body && Object.keys(ajaxRequest.body).length > 0
-        ? '_b:' + JSON.stringify(ajaxRequest.body)
-        : '';
+      ajaxRequest.body && Object.keys(ajaxRequest.body).length > 0 ? '_b:' + JSON.stringify(ajaxRequest.body) : '';
 
     return `${ajaxRequest.method}::${ajaxRequest.url}${headerStr}${bodyStr}`;
   }
@@ -124,10 +111,7 @@ export abstract class WakoBaseHttpService {
       httpRequest.responseType = 'json';
     }
 
-    timeToWaitOnTooManyRequest =
-      timeToWaitOnTooManyRequest || this.getTimeToWaitOnTooManyRequest();
-    timeToWaitBetweenEachRequest =
-      timeToWaitBetweenEachRequest || this.getTimeToWaitBetweenEachRequest();
+    timeToWaitBetweenEachRequest = timeToWaitBetweenEachRequest || this.getTimeToWaitBetweenEachRequest();
 
     const domain = getDomainFromUrl(httpRequest.url);
 
@@ -137,7 +121,7 @@ export abstract class WakoBaseHttpService {
     let obs = this.observableRequests.get(observableKey);
 
     if (!obs) {
-      obs = new Observable(observer => {
+      obs = new Observable((observer) => {
         let cacheObs = of(null);
         if (cacheTime) {
           cacheObs = this.getCacheService().getCacheObject<T>(cacheKey);
@@ -160,16 +144,15 @@ export abstract class WakoBaseHttpService {
             timeout(timeoutMs),
             map((response: WakoHttpResponse) => {
               if (cacheTime) {
-                this.getCacheService().set(
-                  cacheKey,
-                  response.response,
-                  cacheTime
-                );
+                this.getCacheService().set(cacheKey, response.response, cacheTime);
               }
+
+              this.unQueuePending(domain);
+              this.runNextIfQueueOk(domain, timeToWaitBetweenEachRequest);
 
               return response.response as T;
             }),
-            catchError(err => {
+            catchError((err) => {
               if (cacheObject) {
                 // Returns old version, better than an error
                 console.log(
@@ -182,19 +165,20 @@ export abstract class WakoBaseHttpService {
                 return of(cacheObject.data);
               }
 
+              this.unQueuePending(domain);
+
               if (err.status === 429) {
+                timeToWaitOnTooManyRequest =
+                  timeToWaitOnTooManyRequest || this.getTimeToWaitOnTooManyRequest(httpRequest, err);
+
                 if (this.queueEnabled) {
-                  this.addToQueue(domain, observer, queueObs, httpRequest.url);
-                  console.log(
-                    'Gonna wait',
-                    timeToWaitOnTooManyRequest,
-                    'ms before continue, on domain',
-                    domain
-                  );
-                  timer(timeToWaitOnTooManyRequest).subscribe(() => {
+                  this.addToQueue(domain, observer, queueObs, httpRequest.url, true);
+                  console.log('Gonna wait', timeToWaitOnTooManyRequest, 'ms before continue, on domain', domain);
+
+                  setTimeout(() => {
                     console.log('RUN NEXT', domain);
-                    this.runNext(domain, timeToWaitBetweenEachRequest);
-                  });
+                    this.runNextIfQueueOk(domain, timeToWaitBetweenEachRequest);
+                  }, timeToWaitOnTooManyRequest);
                 } else {
                   console.log('Queue is disabled do nothing');
                 }
@@ -208,20 +192,16 @@ export abstract class WakoBaseHttpService {
 
           if (this.queueEnabled) {
             this.addToQueue(domain, observer, queueObs, httpRequest.url);
-            if (
-              this.getQueueItemsByDomain(domain).length <=
-              this.getSimultaneousRequest()
-            ) {
-              this.runNext(domain, timeToWaitBetweenEachRequest);
-            }
+
+            this.runNextIfQueueOk(domain, timeToWaitBetweenEachRequest);
           } else {
             queueObs.subscribe(
-              result => {
+              (result) => {
                 this.observableRequests.delete(observableKey);
                 observer.next(result);
                 observer.complete();
               },
-              err => {
+              (err) => {
                 this.observableRequests.delete(observableKey);
                 observer.error(err);
               }
@@ -230,7 +210,7 @@ export abstract class WakoBaseHttpService {
         });
       }).pipe(
         share(),
-        catchError(err => {
+        catchError((err) => {
           if (typeof this.handleError === 'function') {
             return this.handleError(err);
           }
@@ -245,17 +225,39 @@ export abstract class WakoBaseHttpService {
     return obs;
   }
 
+  private static runNextIfQueueOk(domain: string, timeToWaitBetweenEachRequest: number) {
+    if (this.getQueuePendingItemsByDomain(domain).length <= this.getSimultaneousRequest()) {
+      this.runNext(domain, timeToWaitBetweenEachRequest);
+    }
+  }
+
   private static addToQueue(
     domain: string,
     observer: Observer<any>,
     observable: Observable<any>,
-    url: string
+    url: string,
+    addFirst = false
   ) {
-    this.getQueueItemsByDomain(domain).push({
+    const queue = this.getQueueItemsByDomain(domain);
+    const item = {
       observer: observer,
       observable: observable,
-      url: url
-    });
+      url: url,
+    };
+    if (addFirst) {
+      queue.unshift(item);
+    } else {
+      queue.push(item);
+    }
+
+    this.getQueuePendingItemsByDomain(domain).push(item);
+  }
+
+  private static unQueuePending(domain: string) {
+    const queueItems = this.getQueuePendingItemsByDomain(domain);
+    if (queueItems.length > 0) {
+      queueItems.shift();
+    }
   }
 
   private static runNext(domain: string, timeToWaitBetweenEachRequest: number) {
@@ -274,78 +276,58 @@ export abstract class WakoBaseHttpService {
           })
         )
         .subscribe(
-          result => {
+          (result) => {
             data.observer.next(result);
             data.observer.complete();
           },
-          err => {
+          (err) => {
             data.observer.error(err);
           }
         );
     }
   }
 
-  static get<T>(
-    url: string,
-    params?: any,
-    cacheTime?: string | number,
-    timeoutMs = 10000
-  ): Observable<T> {
+  static get<T>(url: string, params?: any, cacheTime?: string | number, timeoutMs = 10000): Observable<T> {
     return this.request<T>(
       {
         url: this.getApiBaseUrl() + WakoHttpService.addParamsToUrl(url, params),
-        method: 'GET'
+        method: 'GET',
       },
       cacheTime,
       timeoutMs
     );
   }
 
-  static post<T>(
-    url: string,
-    body: Object,
-    cacheTime?: string | number,
-    timeoutMs = 10000
-  ): Observable<T> {
+  static post<T>(url: string, body: Object, cacheTime?: string | number, timeoutMs = 10000): Observable<T> {
     return this.request<T>(
       {
         url: this.getApiBaseUrl() + url,
         method: 'POST',
-        body: body
+        body: body,
       },
       cacheTime,
       timeoutMs
     );
   }
 
-  static put<T>(
-    url: string,
-    body: Object,
-    cacheTime?: string | number,
-    timeoutMs = 10000
-  ): Observable<T> {
+  static put<T>(url: string, body: Object, cacheTime?: string | number, timeoutMs = 10000): Observable<T> {
     return this.request<T>(
       {
         url: this.getApiBaseUrl() + url,
         method: 'PUT',
-        body: body
+        body: body,
       },
       cacheTime,
       timeoutMs
     );
   }
 
-  static delete<T>(
-    url: string,
-    body: Object,
-    cacheTime?: string | number,
-    timeoutMs = 10000
-  ): Observable<T> {
+  static delete<T>(url: string, body: Object, cacheTime?: string | number, timeoutMs = 10000): Observable<T> {
     return this.request<T>(
       {
         url: this.getApiBaseUrl() + url,
         method: 'DELETE',
-        body: body
+        body: body,
       },
       cacheTime,
       timeoutMs
