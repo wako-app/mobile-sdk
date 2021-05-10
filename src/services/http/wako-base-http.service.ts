@@ -73,6 +73,8 @@ export abstract class WakoBaseHttpService {
     return {};
   }
 
+  private static alreadyRetriedQuery = new Map<string, boolean>();
+
   static unHandleError(err: any) {
     if (err instanceof WakoHttpError) {
       console.error(`Unhandled error: ${err.status} ${err.request.method} ${err.request.url}`);
@@ -172,7 +174,13 @@ export abstract class WakoBaseHttpService {
                   timeToWaitOnTooManyRequest || this.getTimeToWaitOnTooManyRequest(httpRequest, err);
 
                 if (this.queueEnabled) {
-                  this.addToQueue(domain, observer, queueObs, httpRequest.url, true);
+                  if (this.alreadyRetriedQuery.has(observableKey) === false) {
+                    this.addToQueue(domain, observer, queueObs, httpRequest.url, true);
+                    this.alreadyRetriedQuery.set(observableKey, true);
+                  } else {
+                    console.log('Query already retried, skip it', httpRequest.url);
+                  }
+
                   console.log('Gonna wait', timeToWaitOnTooManyRequest, 'ms before continue, on domain', domain);
 
                   setTimeout(() => {
