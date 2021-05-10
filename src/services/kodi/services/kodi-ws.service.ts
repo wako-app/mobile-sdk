@@ -1,8 +1,8 @@
-import { KodiHostStructure } from '../structures/kodi-host.structure';
-import { ReplaySubject, Subject, throwError, of } from 'rxjs';
-import { KodiAction } from './kodi-http.service';
+import { of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { first, switchMap } from 'rxjs/operators';
 import { wakoLog } from '../../../tools/utils.tool';
+import { KodiHostStructure } from '../structures/kodi-host.structure';
+import { KodiAction } from './kodi-http.service';
 
 export class KodiWsService {
   static currentWebSocket: WebSocket;
@@ -18,7 +18,12 @@ export class KodiWsService {
   static connect(config: KodiHostStructure) {
     const apiBaseUrl = `ws://${config.host}:${config.wsPort ? config.wsPort : 9090}/jsonrpc`;
 
+    if (this.currentWebSocket && this.currentWebSocket.url === apiBaseUrl) {
+      return;
+    }
+
     if (this.currentWebSocket) {
+      this.currentWebSocket.onclose = null;
       this.currentWebSocket.close();
     }
 
