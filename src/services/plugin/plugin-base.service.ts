@@ -35,28 +35,28 @@ export abstract class PluginBaseService {
    * The more time it takes, the more the user will have to wait
    * @param movie
    */
-  abstract async beforeMovieMiddleware(movie: Movie): Promise<Movie>;
+  abstract beforeMovieMiddleware(movie: Movie): Promise<Movie>;
 
   /**
    * Method called after the view has been rendered.
    * The view will be refreshed with the new data
    * @param movie
    */
-  abstract async afterMovieMiddleware(movie: Movie): Promise<Movie>;
+  abstract afterMovieMiddleware(movie: Movie): Promise<Movie>;
 
   /**
    * Method called before rendering the view.
    * The more time it takes, the more the user will have to wait
    * @param show
    */
-  abstract async beforeShowMiddleware(show: Show): Promise<Show>;
+  abstract beforeShowMiddleware(show: Show): Promise<Show>;
 
   /**
    * Method called after the view has been rendered.
    * The view will be refreshed with the new data
    * @param show
    */
-  abstract async afterShowMiddleware(show: Show): Promise<Show>;
+  abstract afterShowMiddleware(show: Show): Promise<Show>;
 
   /**
    * Method called before rendering the view.
@@ -64,7 +64,7 @@ export abstract class PluginBaseService {
    * @param show
    * @param episode
    */
-  abstract async beforeEpisodeMiddleware(show: Show, episode: Episode): Promise<Episode>;
+  abstract beforeEpisodeMiddleware(show: Show, episode: Episode): Promise<Episode>;
 
   /**
    * Method called after the view has been rendered.
@@ -72,7 +72,7 @@ export abstract class PluginBaseService {
    * @param show
    * @param episode
    */
-  abstract async afterEpisodeMiddleware(show: Show, episode: Episode): Promise<Episode>;
+  abstract afterEpisodeMiddleware(show: Show, episode: Episode): Promise<Episode>;
 
   /**
    * Method to retrieve ExplorerFolderItem if your plugin has the "file-explorer" action enabled
