@@ -18,10 +18,6 @@ export class KodiWsService {
   static connect(config: KodiHostStructure) {
     const apiBaseUrl = `ws://${config.host}:${config.wsPort ? config.wsPort : 9090}/jsonrpc`;
 
-    if (this.currentWebSocket && this.currentWebSocket.url === apiBaseUrl) {
-      return;
-    }
-
     if (this.currentWebSocket) {
       this.currentWebSocket.onclose = null;
       this.currentWebSocket.close();
