@@ -1,6 +1,6 @@
+import { WakoStorage } from './../storage/wako-storage.service';
 import { Subject } from 'rxjs';
 import { Playlist } from '../../entities/playlist';
-import { Storage } from '@ionic/storage';
 import { PlaylistVideo } from '../../entities/playlist-video';
 import { OpenMedia } from '../kodi/services/kodi-app.service';
 import { isSameId } from '../../tools/utils.tool';
@@ -12,14 +12,14 @@ export class PlaylistService {
 
   private static instance: PlaylistService;
 
-  private constructor(private storage: Storage) {}
+  private constructor(private storage: WakoStorage) {}
 
-  static initialize(storage: Storage) {
+  static initialize(wakoStorage: WakoStorage) {
     if (this.instance) {
       return;
     }
 
-    this.instance = new this(storage);
+    this.instance = new this(wakoStorage);
   }
 
   static getInstance() {

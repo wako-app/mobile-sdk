@@ -1,11 +1,12 @@
+import { WakoStorage } from './../storage/wako-storage.service';
 import { map } from 'rxjs/operators';
 import { from } from 'rxjs';
-import { Storage } from '@ionic/storage';
+
 import { WakoStorageCacheConfig } from '../../config';
 import { PLATFORM_ID } from '@angular/core';
 
 export class WakoCacheService {
-  protected static storageEngine = new Storage(WakoStorageCacheConfig, PLATFORM_ID);
+  protected static storageEngine = new WakoStorage(WakoStorageCacheConfig);
 
   private static serialize(data: any, expiresAt: number) {
     const d: CacheSerialized = {

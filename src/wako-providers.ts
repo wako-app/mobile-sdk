@@ -1,22 +1,34 @@
+import { StorageConfig, StorageConfigToken } from '@ionic/storage';
+
 import { Provider } from '@angular/core';
-import { WakoToastService } from './services/app/wako-toast.service';
 import { ActionSheetController, Platform, ToastController } from '@ionic/angular';
+
 import { TranslateService } from '@ngx-translate/core';
 import { WakoFileActionService } from './services/app/wako-file-action.service';
+import { WakoToastService } from './services/app/wako-toast.service';
 import { PlaylistService } from './services/playlist/playlist.service';
-import { Storage } from '@ionic/storage';
+import { WakoStorage } from './services/storage/wako-storage.service';
 
 let wakoToastServiceInst: WakoToastService = null;
 let wakoFileActionServiceInst: WakoFileActionService = null;
 
+export const provideStorage = (storageConfig: StorageConfig) => {
+  return new WakoStorage(storageConfig);
+};
+
 export const WakoProviders: Provider[] = [
   {
+    provide: WakoStorage,
+    useFactory: provideStorage,
+    deps: [StorageConfigToken],
+  },
+  {
     provide: PlaylistService,
-    useFactory: (storage: Storage) => {
+    useFactory: (storage: WakoStorage) => {
       PlaylistService.initialize(storage);
       return PlaylistService.getInstance();
     },
-    deps: [Storage],
+    deps: [WakoStorage],
   },
   {
     provide: WakoToastService,

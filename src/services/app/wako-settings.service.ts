@@ -1,8 +1,8 @@
-import { Storage } from '@ionic/storage';
+import { WakoStorage } from './../storage/wako-storage.service';
+
 import { Subject } from 'rxjs';
 import { mergeDeep } from '../../tools/utils.tool';
 import { WakoStorageConfig } from '../../config';
-import { PLATFORM_ID } from '@angular/core';
 
 export interface WakoSettingsByCategoryChange<T> {
   readonly prevValue: T;
@@ -18,7 +18,7 @@ export class WakoSettingsService {
 
   private static settingsKeyPrefix = '__settings_';
 
-  private static storage = new Storage(WakoStorageConfig, PLATFORM_ID);
+  private static storage = new WakoStorage(WakoStorageConfig);
 
   static mergeDeep(target: {}, source: {}) {
     return mergeDeep(target, source);
