@@ -1,9 +1,7 @@
-import { WakoStorage } from './../storage/wako-storage.service';
+import { from, lastValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { from } from 'rxjs';
-
 import { WakoStorageCacheConfig } from '../../config';
-import { PLATFORM_ID } from '@angular/core';
+import { WakoStorage } from './../storage/wako-storage.service';
 
 export class WakoCacheService {
   protected static storageEngine = new WakoStorage(WakoStorageCacheConfig);
@@ -111,7 +109,7 @@ export class WakoCacheService {
 
     const keys = await this.storageEngine.keys();
     for (const key of keys) {
-      await this.get(key).toPromise();
+      await lastValueFrom(this.get(key));
     }
   }
 }

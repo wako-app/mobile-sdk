@@ -1,8 +1,6 @@
-import { StorageConfig, StorageConfigToken } from '@ionic/storage';
-
 import { Provider } from '@angular/core';
 import { ActionSheetController, Platform, ToastController } from '@ionic/angular';
-
+import { StorageConfig, StorageConfigToken } from '@ionic/storage-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { WakoFileActionService } from './services/app/wako-file-action.service';
 import { WakoToastService } from './services/app/wako-toast.service';

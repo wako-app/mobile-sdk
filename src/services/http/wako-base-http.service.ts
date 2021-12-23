@@ -1,5 +1,4 @@
 import { EMPTY, NEVER, Observable, Observer, of, throwError } from 'rxjs';
-import { AjaxRequest } from 'rxjs/ajax';
 import { catchError, finalize, map, share, timeout } from 'rxjs/operators';
 import { getDomainFromUrl } from '../../tools/utils.tool';
 import { CacheObject, WakoCacheService } from '../cache/wako-cache.service';
@@ -85,7 +84,7 @@ export abstract class WakoBaseHttpService {
     return throwError(err);
   }
 
-  protected static getObservableKey(ajaxRequest: AjaxRequest, includeHeaders = false) {
+  protected static getObservableKey(ajaxRequest: WakoHttpRequest, includeHeaders = false) {
     const headerStr =
       includeHeaders && ajaxRequest.headers && Object.keys(ajaxRequest.headers).length > 0
         ? '_h:' + JSON.stringify(ajaxRequest.headers)
@@ -124,7 +123,12 @@ export abstract class WakoBaseHttpService {
 
     if (!obs) {
       obs = new Observable((observer) => {
-        let cacheObs = of(null);
+        let cacheObs: Observable<{
+          data: T;
+          hasExpired: boolean;
+          key: string;
+        } | null> = of(null);
+
         if (cacheTime) {
           cacheObs = this.getCacheService().getCacheObject<T>(cacheKey);
         }

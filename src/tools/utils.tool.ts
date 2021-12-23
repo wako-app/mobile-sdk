@@ -1,5 +1,7 @@
 import { BaseIds } from '../entities/base-media';
 
+export const WK_ACTIVATABLE_CLASS = 'wk-activatable';
+
 export function getDomainFromUrl(url: string) {
   return url.replace(/http(s)?:\/\//gi, '').split('/')[0];
 }
