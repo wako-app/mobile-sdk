@@ -336,7 +336,7 @@ export class WakoFileActionService {
 
   async playInVlc(link: string) {
     if (this.platform.is('ios')) {
-      const url = `vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(link)}`;
+      const url = `vlc-x-callback://x-callback-url/stream?url=${link}`;
       await BrowserService.open(url, false);
     } else {
       const url = `vlc://${link}`;
@@ -346,7 +346,7 @@ export class WakoFileActionService {
 
   async downloadWithVlc(link: string) {
     if (this.platform.is('ios')) {
-      const url = `vlc-x-callback://x-callback-url/download?url=${encodeURIComponent(link)}`;
+      const url = `vlc-x-callback://x-callback-url/download?url=${link}`;
       await BrowserService.open(url, false);
     }
   }
