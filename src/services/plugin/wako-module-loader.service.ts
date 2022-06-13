@@ -1,7 +1,8 @@
 import { Injector, ɵcreateInjector as createInjector } from '@angular/core';
-import { PLUGIN_EXTERNALS_MAP } from './plugin-externals';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { PLUGIN_EXTERNALS_MAP } from './plugin-externals';
+import { ModuleType } from './wako-plugin-loader.service';
 
 const SystemJs = window.System;
 
@@ -48,7 +49,7 @@ export class WakoModuleLoaderService {
     );
   }
 
-  private initialize(moduleType: any, isFirstLoad: boolean) {
+  private initialize(moduleType: ModuleType, isFirstLoad: boolean) {
     const injector = createInjector(moduleType, this.injector);
 
     const pluginService = injector.get(moduleType.pluginService);
@@ -62,7 +63,7 @@ export class WakoModuleLoaderService {
     return { moduleType, injector };
   }
 
-  getPluginService(moduleType, injector) {
+  getPluginService(moduleType: ModuleType, injector: Injector) {
     return injector.get(moduleType.pluginService);
   }
 }

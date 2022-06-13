@@ -6,7 +6,7 @@
   "description": "Will make your life better",
   "author": "",
   "actions": ["movies", "episodes"],
-  "entryPoint": "/plugin.js",
+  "entryPointV3": "/plugin.js",
   "languages": {
     "en": "/i18n/en.json",
     "fr": "/i18n/fr.json"

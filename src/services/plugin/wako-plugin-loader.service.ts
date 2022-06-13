@@ -1,21 +1,20 @@
-import { ComponentFactoryResolver, Injector, ViewContainerRef } from '@angular/core';
-
-import { catchError, first, map, switchMap, tap } from 'rxjs/operators';
+import { Injector, Type, ViewContainerRef } from '@angular/core';
 import { EMPTY, forkJoin, from, of, ReplaySubject, Subject, throwError } from 'rxjs';
-
-import { WakoModuleLoaderService } from './wako-module-loader.service';
-import { MovieDetailBaseComponent } from '../../components/movie-detail-base.component';
+import { catchError, first, map, switchMap, tap } from 'rxjs/operators';
 import { EpisodeDetailBaseComponent } from '../../components/episode-detail-base.component';
 import { EpisodeItemOptionBaseComponent } from '../../components/episode-item-option-base.component';
+import { MovieDetailBaseComponent } from '../../components/movie-detail-base.component';
 import { ShowDetailBaseComponent } from '../../components/show-detail-base.component';
-import { WakoHttpRequestService } from '../http/wako-http-request.service';
-import { mergeDeep } from '../../tools/utils.tool';
-import { WakoSettingsService } from '../app/wako-settings.service';
-import { Movie } from '../../entities/movie';
-import { PluginBaseService } from './plugin-base.service';
-import { Show } from '../../entities/show';
 import { Episode } from '../../entities/episode';
+import { Movie } from '../../entities/movie';
+import { Show } from '../../entities/show';
+import { PluginBaseModuleInt } from '../../modules/plugin-base.module';
+import { mergeDeep } from '../../tools/utils.tool';
 import { WakoDebugService } from '../../tools/wako-debug.service';
+import { WakoSettingsService } from '../app/wako-settings.service';
+import { WakoHttpRequestService } from '../http/wako-http-request.service';
+import { PluginBaseService } from './plugin-base.service';
+import { WakoModuleLoaderService } from './wako-module-loader.service';
 
 export class WakoPluginLoaderService {
   loaded$ = new ReplaySubject<boolean>(1);
@@ -32,16 +31,16 @@ export class WakoPluginLoaderService {
 
   protected moduleLoader: WakoModuleLoaderService;
 
-  constructor(protected cfr: ComponentFactoryResolver, protected injector: Injector) {
+  constructor(protected injector: Injector) {
     this.moduleLoader = new WakoModuleLoaderService(injector);
   }
 
-  static initialize(cfr: ComponentFactoryResolver, injector: Injector) {
+  static initialize(injector: Injector) {
     if (this.instance) {
       return;
     }
 
-    this.instance = new this(cfr, injector);
+    this.instance = new this(injector);
   }
 
   static getInstance() {
@@ -57,7 +56,7 @@ export class WakoPluginLoaderService {
 
     return WakoHttpRequestService.get<PluginManifest>(manifestUrl).pipe(
       catchError((err) => {
-        return throwError(err);
+        return throwError(() => new Error(err));
       }),
       switchMap((manifest) => {
         manifest.url = manifestUrl;
@@ -68,7 +67,7 @@ export class WakoPluginLoaderService {
         paths.pop();
         const baseUrl = paths.join('/');
 
-        const pluginUrl = manifest.entryPointV2.match('http') ? manifest.entryPointV2 : baseUrl + manifest.entryPointV2;
+        const pluginUrl = manifest.entryPointV3.match('http') ? manifest.entryPointV3 : baseUrl + manifest.entryPointV3;
 
         const pluginDetail = new PluginDetail();
         pluginDetail.manifestUrl = manifestUrl;
@@ -279,7 +278,8 @@ export class WakoPluginLoaderService {
     return this.loaded$.pipe(
       first(),
       map(() => {
-        let pluginMap = null;
+        let pluginMap: PluginModuleMap = null;
+
         this.pluginModuleMap.forEach((plugin) => {
           if (pluginId && plugin.pluginDetail.manifest.id !== pluginId) {
             return;
@@ -298,12 +298,9 @@ export class WakoPluginLoaderService {
           pluginMap.pluginDetail.manifest.actions.includes(action) &&
           moduleType.movieComponent
         ) {
-          const compFactory = this.cfr.resolveComponentFactory<MovieDetailBaseComponent>(moduleType.movieComponent);
-          const movieComponent = viewContainerRef.createComponent<MovieDetailBaseComponent>(
-            compFactory,
-            undefined,
-            pluginMap.injector
-          );
+          const movieComponent = viewContainerRef.createComponent<MovieDetailBaseComponent>(moduleType.movieComponent, {
+            injector: pluginMap.injector,
+          });
 
           movieComponent.instance.setMovie(data.movie);
         } else if (
@@ -311,32 +308,32 @@ export class WakoPluginLoaderService {
           pluginMap.pluginDetail.manifest.actions.includes(action) &&
           moduleType.episodeComponent
         ) {
-          const compFactory = this.cfr.resolveComponentFactory<EpisodeDetailBaseComponent>(moduleType.episodeComponent);
           const episodeComponent = viewContainerRef.createComponent<EpisodeDetailBaseComponent>(
-            compFactory,
-            undefined,
-            pluginMap.injector
+            moduleType.episodeComponent,
+            {
+              injector: pluginMap.injector,
+            }
           );
 
           episodeComponent.instance.setShowEpisode(data.show, data.episode);
         } else if (action === 'settings' && moduleType.settingsComponent) {
-          const compFactory = this.cfr.resolveComponentFactory<any>(moduleType.settingsComponent);
-          viewContainerRef.createComponent<any>(compFactory, undefined, pluginMap.injector);
+          viewContainerRef.createComponent<any>(moduleType.settingsComponent, {
+            injector: pluginMap.injector,
+          });
         } else if (action === 'plugin-detail' && moduleType.pluginDetailComponent) {
-          const compFactory = this.cfr.resolveComponentFactory<any>(moduleType.pluginDetailComponent);
-          viewContainerRef.createComponent<any>(compFactory, undefined, pluginMap.injector);
+          viewContainerRef.createComponent<any>(moduleType.pluginDetailComponent, {
+            injector: pluginMap.injector,
+          });
         } else if (
           action === 'episodes-item-option' &&
           pluginMap.pluginDetail.manifest.actions.includes(action) &&
           moduleType.episodeItemOptionComponent
         ) {
-          const compFactory = this.cfr.resolveComponentFactory<EpisodeItemOptionBaseComponent>(
-            moduleType.episodeItemOptionComponent
-          );
           const episodeComponent = viewContainerRef.createComponent<EpisodeItemOptionBaseComponent>(
-            compFactory,
-            undefined,
-            pluginMap.injector
+            moduleType.episodeItemOptionComponent,
+            {
+              injector: pluginMap.injector,
+            }
           );
 
           episodeComponent.instance.setShowEpisode(data.show, data.episode);
@@ -345,12 +342,9 @@ export class WakoPluginLoaderService {
           pluginMap.pluginDetail.manifest.actions.includes(action) &&
           moduleType.showComponent
         ) {
-          const compFactory = this.cfr.resolveComponentFactory<ShowDetailBaseComponent>(moduleType.showComponent);
-          const showComponent = viewContainerRef.createComponent<ShowDetailBaseComponent>(
-            compFactory,
-            undefined,
-            pluginMap.injector
-          );
+          const showComponent = viewContainerRef.createComponent<ShowDetailBaseComponent>(moduleType.showComponent, {
+            injector: pluginMap.injector,
+          });
 
           showComponent.instance.setShow(data.show);
         }
@@ -373,7 +367,7 @@ export class WakoPluginLoaderService {
             return;
           }
 
-          const moduleType = pluginMap.moduleType as any;
+          const moduleType = pluginMap.moduleType;
 
           switch (action) {
             case 'movies':
@@ -526,8 +520,8 @@ export class WakoPluginLoaderService {
 
 export interface PluginModuleMap {
   pluginDetail: PluginDetail;
-  moduleType: any;
-  injector: Injector;
+  moduleType: ModuleType;
+  injector?: Injector;
 }
 
 export declare type PluginAction =
@@ -560,12 +554,16 @@ export interface PluginManifest {
   description: string;
   author: string;
   actions: PluginAction[];
-  entryPointV2: string;
   /**
-   * Entry point for wako version < 4 build with angular 8, won't work with wako 4
-   * @deprecated use now entryPointV2
+   * Starting from wako 6+ which uses @wako-mobile/sdk 7+
    */
-  entryPoint: string;
+  entryPointV3: string;
+  /**
+   * @deprecated used by @wako-mobile/sdk < 7 (i.e. wako < 6)
+   */
+  entryPointV2: string;
   languages: { [key: string]: string };
   changeLogs?: { [key: string]: string };
 }
+
+export declare type ModuleType = Type<any> & PluginBaseModuleInt;
