@@ -140,11 +140,14 @@ export class WakoHttpService {
           const contentType = response.headers.get('content-type');
 
           if (contentType && contentType.includes('application/json')) {
-            return response.json().then((json) => {
-              ajaxResponse.response = json;
+            return response
+              .json()
+              .then((json) => {
+                ajaxResponse.response = json;
 
-              return ajaxResponse;
-            });
+                return ajaxResponse;
+              })
+              .catch(() => ajaxResponse);
           } else {
             return response.text().then((text) => {
               try {
