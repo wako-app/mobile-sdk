@@ -5,6 +5,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { getEpisodeCode } from '../../tools/utils.tool';
 import { ChromecastService } from '../chromecast/chromecast.service';
 import { KodiAppService, KodiOpenParams, OpenMedia } from '../kodi/services/kodi-app.service';
+import { WakoShare } from '../share/wako-share.service';
 import { PlaylistVideo } from './../../entities/playlist-video';
 import { PlaylistService } from './../playlist/playlist.service';
 import { BrowserService } from './browser.service';
@@ -394,12 +395,12 @@ export class WakoFileActionService {
   }
 
   share(link: string, title: string) {
-    if (window['plugins'] && window['plugins'].socialsharing) {
-      window['plugins'].socialsharing.shareWithOptions({
-        url: link,
-        chooserTitle: title,
-      });
-    }
+    WakoShare.share({
+      dialogTitle: title,
+      text: title,
+      url: link,
+      title,
+    });
   }
 
   openWith(url: string, title: string) {
