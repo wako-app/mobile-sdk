@@ -73,7 +73,11 @@ export class WakoPluginLoaderService {
         pluginDetail.manifestUrl = manifestUrl;
         pluginDetail.manifest = manifest;
 
-        return WakoHttpRequestService.get<string>(pluginUrl).pipe(
+        return WakoHttpRequestService.request<string>({
+          url: pluginUrl,
+          method: 'GET',
+          responseType: 'text',
+        }).pipe(
           switchMap((pluginSource) => {
             pluginDetail.source = pluginSource;
             if (manifest.languages) {

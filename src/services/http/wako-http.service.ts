@@ -35,13 +35,6 @@ export class WakoHttpService {
 
   private static async _mobileRequestPromise(httpRequest: WakoHttpRequest): Promise<WakoHttpResponse> {
     try {
-      const contentType = httpRequest.headers['Content-Type'];
-
-      // if (contentType && contentType === 'application/x-www-form-urlencoded') {
-      //   httpRequest.responseType = 'text';
-      // }
-
-      console.log('CapacitorHttp', httpRequest);
       const response: HttpResponse = await CapacitorHttp.request({
         method: httpRequest.method,
         url: httpRequest.url,
@@ -49,7 +42,7 @@ export class WakoHttpService {
         data: httpRequest.body,
         responseType: httpRequest.responseType as HttpResponseType,
       });
-      console.log('CapacitorHttp response', response);
+
       if (response.status >= 200 && response.status <= 299) {
         return {
           status: response.status,
@@ -61,7 +54,6 @@ export class WakoHttpService {
         throw new WakoHttpError(httpRequest, response.status, httpRequest.responseType, response.data);
       }
     } catch (e) {
-      console.log('CapacitorHttp failure', e);
       throw e;
     }
   }
