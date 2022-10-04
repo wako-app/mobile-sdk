@@ -1,8 +1,7 @@
-import { defer, Observable, throwError } from 'rxjs';
+import { CapacitorHttp, HttpHeaders, HttpResponse, HttpResponseType } from '@capacitor/core';
+import { defer, from, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { wakoLog } from '../../tools/utils.tool';
-
-declare const cordova: any;
 
 export class WakoHttpService {
   static isMobileDevice: boolean;
@@ -34,68 +33,41 @@ export class WakoHttpService {
     );
   }
 
-  private static mobileRequest(httpRequest: WakoHttpRequest): Observable<WakoHttpResponse> {
-    return defer(() => {
+  private static async _mobileRequestPromise(httpRequest: WakoHttpRequest): Promise<WakoHttpResponse> {
+    try {
       const contentType = httpRequest.headers['Content-Type'];
 
-      let serializer = 'json';
-      if (contentType) {
-        // This has been added to handle weird form. But it should be generic to handle all case
-        httpRequest.headers['content-type'] = httpRequest.headers['Content-Type'];
+      // if (contentType && contentType === 'application/x-www-form-urlencoded') {
+      //   httpRequest.responseType = 'text';
+      // }
 
-        if (contentType === 'application/x-www-form-urlencoded') {
-          serializer = 'urlencoded';
-          if (typeof httpRequest.body === 'string') {
-            serializer = 'utf8';
-          }
-        }
-      }
-      cordova['plugin']['http'].setDataSerializer(serializer);
-
-      return new Promise<WakoHttpResponse>((resolve, reject) => {
-        const success = (response: CordovaHttpSuccess) => {
-          const ajaxResponse = {
-            request: httpRequest,
-            responseText: response.data,
-            status: response.status,
-            responseType: httpRequest.responseType,
-            response: response,
-          } as WakoHttpResponse;
-
-          try {
-            ajaxResponse.response = ajaxResponse.responseType === 'json' ? JSON.parse(response.data) : response.data;
-          } catch (e) {
-            ajaxResponse.response = response.data;
-          }
-
-          resolve(ajaxResponse);
-        };
-
-        const failure = (response: CordovaHttpFailure) => {
-          let error = response.error;
-          try {
-            error = httpRequest.responseType === 'json' ? JSON.parse(response.error) : response.error;
-          } catch (e) {
-            error = response.error;
-          }
-
-          reject(new WakoHttpError(httpRequest, response.status, httpRequest.responseType, error));
-        };
-
-        if (httpRequest.method === 'GET') {
-          cordova['plugin']['http'].get(httpRequest.url, {}, httpRequest.headers, success, failure);
-        } else if (httpRequest.method === 'POST') {
-          if (httpRequest.body === null) {
-            httpRequest.body = {};
-          }
-          cordova['plugin']['http'].post(httpRequest.url, httpRequest.body, httpRequest.headers, success, failure);
-        } else if (httpRequest.method === 'DELETE') {
-          cordova['plugin']['http'].delete(httpRequest.url, httpRequest.body, httpRequest.headers, success, failure);
-        } else {
-          throw new Error('httpRequest.method  not set');
-        }
+      console.log('CapacitorHttp', httpRequest);
+      const response: HttpResponse = await CapacitorHttp.request({
+        method: httpRequest.method,
+        url: httpRequest.url,
+        headers: httpRequest.headers as HttpHeaders,
+        data: httpRequest.body,
+        responseType: httpRequest.responseType as HttpResponseType,
       });
-    });
+      console.log('CapacitorHttp response', response);
+      if (response.status >= 200 && response.status <= 299) {
+        return {
+          status: response.status,
+          response: response.data,
+          responseText: response.data,
+          responseType: httpRequest.responseType,
+        };
+      } else {
+        throw new WakoHttpError(httpRequest, response.status, httpRequest.responseType, response.data);
+      }
+    } catch (e) {
+      console.log('CapacitorHttp failure', e);
+      throw e;
+    }
+  }
+
+  private static mobileRequest(httpRequest: WakoHttpRequest): Observable<WakoHttpResponse> {
+    return from(this._mobileRequestPromise(httpRequest));
   }
 
   private static browserRequest(httpRequest: WakoHttpRequest): Observable<WakoHttpResponse> {
