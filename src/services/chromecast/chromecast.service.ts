@@ -18,8 +18,8 @@ export interface ChromecastMedia {
   play: () => void;
   pause: () => void;
   stop: () => void;
-  seek: ({ currentTime: number }) => void;
-  setVolume: ({ volume: ChromecastVolume }) => void;
+  seek: (args: { currentTime: number }) => void;
+  setVolume: (args: { volume: ChromecastVolume }) => void;
 }
 
 export interface ChromecastVolume {
@@ -61,10 +61,8 @@ export class ChromecastService {
     console.log('CAST', 'initialize');
 
     const apiConfig = new chrome.cast.ApiConfig(
-      new chrome.cast.SessionRequest(
-        chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID
-      ),
-      session => {
+      new chrome.cast.SessionRequest(chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID),
+      (session) => {
         // The session listener is only called under the following conditions:
         // * will be called shortly chrome.cast.initialize is run
         // * if the device is already connected to a cast session
@@ -75,7 +73,7 @@ export class ChromecastService {
           this.onExistingSessionJoined(session);
         }, 1000);
       },
-      receiverStatus => {
+      (receiverStatus) => {
         // receiverAvailable is a boolean.
         // True = at least one chromecast device is available
         // False = No chromecast devices available
@@ -92,7 +90,7 @@ export class ChromecastService {
         console.log('CAST', 'chrome.cast.initialize success');
         this.initialized$.next(true);
       },
-      err => {
+      (err) => {
         console.log('CAST', 'chrome.cast.initialize success', err);
       }
     );
@@ -111,7 +109,7 @@ export class ChromecastService {
 
     this.session = session;
 
-    this.session.addUpdateListener(isAlive => {
+    this.session.addUpdateListener((isAlive) => {
       console.log('CAST', 'addUpdateListener - isAlive', isAlive);
       if (!isAlive) {
         this.session = null;
@@ -153,13 +151,13 @@ export class ChromecastService {
 
     console.log('CAST', 'Called requestSession');
 
-    return new Observable(observer => {
+    return new Observable((observer) => {
       const timer = setTimeout(() => {
         observer.error('Failed to request session timeout');
       }, 100000);
 
       chrome.cast.requestSession(
-        session => {
+        (session) => {
           console.log('CAST', 'chrome.cast.requestSession success');
           this.sessionChanged$.subscribe(() => {
             if (timer) {
@@ -173,12 +171,8 @@ export class ChromecastService {
 
           this.onExistingSessionJoined(session);
         },
-        err => {
-          console.log(
-            'CAST',
-            'chrome.cast.requestSession error',
-            err && err.description ? err.description : err
-          );
+        (err) => {
+          console.log('CAST', 'chrome.cast.requestSession error', err && err.description ? err.description : err);
           observer.error(err && err.description ? err.description : err);
         }
       );
@@ -224,20 +218,9 @@ export class ChromecastService {
       contentType = this.getContentType(url);
     }
 
-    console.log(
-      'CAST',
-      'Called - loadMedia',
-      title,
-      url,
-      contentType,
-      customData,
-      metadata
-    );
+    console.log('CAST', 'Called - loadMedia', title, url, contentType, customData, metadata);
 
-    const mediaInfo: ChromecastMediaInfo = new chrome.cast.media.MediaInfo(
-      url,
-      contentType
-    );
+    const mediaInfo: ChromecastMediaInfo = new chrome.cast.media.MediaInfo(url, contentType);
 
     mediaInfo.customData = customData || {};
 
@@ -246,7 +229,7 @@ export class ChromecastService {
     }
 
     const defaultMetadata = {
-      title: title
+      title: title,
     };
 
     if (poster) {
@@ -255,7 +238,7 @@ export class ChromecastService {
 
     mediaInfo.metadata = Object.assign(defaultMetadata, metadata);
 
-    return new Observable(observer => {
+    return new Observable((observer) => {
       this.session.loadMedia(
         new chrome.cast.media.LoadRequest(mediaInfo),
         (media: ChromecastMedia) => {
@@ -264,7 +247,7 @@ export class ChromecastService {
           observer.next(true);
           observer.complete();
         },
-        err => {
+        (err) => {
           console.log('CAST', 'sessionRequest.loadMedia error', err);
           observer.error(err);
         }
@@ -278,7 +261,7 @@ export class ChromecastService {
     this.media = media;
 
     // This may not works if is playing before starting the app
-    this.media.addUpdateListener(isAlive => {
+    this.media.addUpdateListener((isAlive) => {
       console.log('CAST', 'addUpdateListener');
       this.refreshMedia(isAlive);
 
@@ -317,15 +300,7 @@ export class ChromecastService {
       switchMap(() => {
         return this.requestSession().pipe(
           switchMap(() => {
-            return this.loadMedia(
-              title,
-              url,
-              poster,
-              openMedia,
-              contentType,
-              customData,
-              metadata
-            );
+            return this.loadMedia(title, url, poster, openMedia, contentType, customData, metadata);
           })
         );
       })
@@ -352,6 +327,6 @@ export class ChromecastService {
   }
 
   static setVolume(volume: number) {
-    this.media.setVolume({ volume: volume });
+    this.media.setVolume({ volume: { level: volume, muted: false } });
   }
 }
