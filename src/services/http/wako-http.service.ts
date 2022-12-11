@@ -7,7 +7,7 @@ declare const cordova: any;
 
 export class WakoHttpService {
   static isMobileDevice: boolean;
-  static mobileHttpEngine: 'cordova' | 'capacitor' = 'capacitor';
+  static mobileHttpEngine: 'cordova' | 'capacitor' = 'cordova';
 
   static request(httpRequest: WakoHttpRequest, byPassCors = true): Observable<WakoHttpResponse> {
     let obs: Observable<WakoHttpResponse>;
