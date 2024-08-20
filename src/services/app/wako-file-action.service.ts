@@ -1,5 +1,14 @@
 import { ActionSheetController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import {
+  closeOutline,
+  cloudDownloadOutline,
+  copyOutline,
+  listOutline,
+  openOutline,
+  shareOutline,
+} from 'ionicons/icons';
 import { NEVER } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { getEpisodeCode } from '../../tools/utils.tool';
@@ -81,8 +90,10 @@ export class WakoFileActionService {
     private translateService: TranslateService,
     private actionSheetController: ActionSheetController,
     private toastService: WakoToastService,
-    private playlistService: PlaylistService
-  ) {}
+    private playlistService: PlaylistService,
+  ) {
+    addIcons({ cloudDownloadOutline, copyOutline, listOutline, openOutline, shareOutline, closeOutline });
+  }
 
   getAllActions() {
     return this.platform.is('ios') ? WakoFileActionIos : WakoFileActionAndroid;
@@ -115,7 +126,7 @@ export class WakoFileActionService {
     openMedia?: OpenMedia,
     kodiOpenParams?: KodiOpenParams,
     excludeActions?: WakoFileAction[],
-    playlistId?: string
+    playlistId?: string,
   ) {
     const buttons = await this.getFileActionButtons(
       link,
@@ -127,7 +138,7 @@ export class WakoFileActionService {
       kodiOpenParams,
       null,
       excludeActions,
-      playlistId
+      playlistId,
     );
 
     return await this.showActionSheetActions(buttons);
@@ -141,7 +152,7 @@ export class WakoFileActionService {
 
     buttons.push({
       text: this.translateService.instant('shared.cancel'),
-      icon: 'close',
+      icon: 'close-outline',
       role: 'cancel',
     });
 
@@ -177,7 +188,7 @@ export class WakoFileActionService {
     kodiOpenParams?: KodiOpenParams,
     actions?: WakoFileAction[],
     excludeActions?: WakoFileAction[],
-    playlistId?: string
+    playlistId?: string,
   ) {
     const settings = await this.getSettings();
 
@@ -208,7 +219,7 @@ export class WakoFileActionService {
       switch (action) {
         case 'copy-url':
           fileActionButton.role = 'copy-url';
-          fileActionButton.icon = 'copy';
+          fileActionButton.icon = 'copy-outline';
           fileActionButton.handler = () => {
             const copyEl = document.querySelector('.action-sheet-copy-url');
             if (!copyEl) {
@@ -242,12 +253,12 @@ export class WakoFileActionService {
           break;
 
         case 'open-with':
-          fileActionButton.icon = 'open';
+          fileActionButton.icon = 'open-outline';
           fileActionButton.handler = () => this.openWith(link, title);
           break;
 
         case 'download-vlc':
-          fileActionButton.icon = 'cloud-download';
+          fileActionButton.icon = 'cloud-download-outline';
           fileActionButton.handler = () => this.downloadWithVlc(link);
           break;
 
@@ -275,12 +286,12 @@ export class WakoFileActionService {
           break;
 
         case 'share-url':
-          fileActionButton.icon = 'share';
+          fileActionButton.icon = 'share-outline';
           fileActionButton.handler = () => this.share(link, title);
           break;
 
         case 'add-to-playlist':
-          fileActionButton.icon = 'list';
+          fileActionButton.icon = 'list-outline';
           fileActionButton.handler = () => this.addToPlaylist(link, title, openMedia, posterUrl, playlistId);
           break;
       }
@@ -321,7 +332,7 @@ export class WakoFileActionService {
             this.toastService.simpleMessage(
               'toasts.kodi.hostUnreachable',
               { hostName: KodiAppService.currentHost.name },
-              2000
+              2000,
             );
           } else {
             this.toastService.simpleMessage('toasts.kodi.noHost');
@@ -330,7 +341,7 @@ export class WakoFileActionService {
         }),
         switchMap(() => {
           return KodiAppService.openUrl(url, openMedia, openKodiRemote, params);
-        })
+        }),
       )
       .subscribe();
   }
@@ -374,7 +385,7 @@ export class WakoFileActionService {
     posterUrl?: string,
     seekTo?: number,
     openMedia?: OpenMedia,
-    fallBackLink?: string
+    fallBackLink?: string,
   ) {
     ChromecastService.openUrl(title || '', link, posterUrl || null, openMedia).subscribe(
       () => {
@@ -390,7 +401,7 @@ export class WakoFileActionService {
             }
           });
         }
-      }
+      },
     );
   }
 
@@ -417,7 +428,7 @@ export class WakoFileActionService {
           },
         },
         () => console.log('intentShim success'),
-        (err) => console.log('intentShim err', err)
+        (err) => console.log('intentShim err', err),
       );
     }
   }

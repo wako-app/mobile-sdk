@@ -7,7 +7,7 @@ declare const cordova: any;
 
 export class WakoHttpService {
   static isMobileDevice: boolean;
-  static mobileHttpEngine: 'cordova' | 'capacitor' = 'cordova';
+  static mobileHttpEngine: 'cordova' | 'capacitor' = 'capacitor';
 
   static request(httpRequest: WakoHttpRequest, byPassCors = true): Observable<WakoHttpResponse> {
     let obs: Observable<WakoHttpResponse>;
@@ -20,7 +20,7 @@ export class WakoHttpService {
             return this.mobileRequest(httpRequest);
           }
           return throwError(err);
-        })
+        }),
       );
     } else {
       obs = this.browserRequest(httpRequest);
@@ -32,7 +32,7 @@ export class WakoHttpService {
           return response;
         }
         throw new WakoHttpError(httpRequest, response.status, response.responseType, response.response);
-      })
+      }),
     );
   }
 
@@ -133,7 +133,7 @@ export class WakoHttpService {
     return from(
       this.mobileHttpEngine === 'cordova' && cordova && cordova['plugin'] && cordova['plugin']['http']
         ? this.cordovaMobileRequest(httpRequest)
-        : this.capacitorMobileRequest(httpRequest)
+        : this.capacitorMobileRequest(httpRequest),
     );
   }
 
@@ -202,7 +202,7 @@ export class WakoHttpService {
         },
         (response) => {
           throw new WakoHttpError(httpRequest, response.status, httpRequest.responseType, response.error);
-        }
+        },
       );
     });
   }
@@ -244,7 +244,7 @@ export class WakoHttpError {
     public request: WakoHttpRequest,
     public status: number,
     public responseType: string,
-    public response: any
+    public response: any,
   ) {}
 }
 
