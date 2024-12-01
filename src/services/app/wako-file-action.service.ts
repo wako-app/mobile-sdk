@@ -8,6 +8,7 @@ import {
   listOutline,
   openOutline,
   shareOutline,
+  playCircleOutline,
 } from 'ionicons/icons';
 import { NEVER } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
@@ -22,6 +23,9 @@ import { CAST_IMAGE, INFUSE_IMAGE, KODI_IMAGE, NPLAYER_IMAGE, VLC_IMAGE } from '
 import { WakoSettingsService } from './wako-settings.service';
 import { WakoToastService } from './wako-toast.service';
 
+import { WakoVideoPlayerService } from '../wako-video-player.service';
+import { WakoGlobal } from '../wako-global';
+
 export declare type WakoFileAction =
   | 'play-kodi'
   | 'copy-url'
@@ -32,7 +36,8 @@ export declare type WakoFileAction =
   | 'play-nplayer'
   | 'play-infuse'
   | 'cast'
-  | 'add-to-playlist';
+  | 'add-to-playlist'
+  | 'wako-video-player';
 
 export const WakoFileActionIos: WakoFileAction[] = [
   'copy-url',
@@ -56,6 +61,13 @@ export const WakoFileActionAndroid: WakoFileAction[] = [
   'add-to-playlist',
 ];
 
+export const WakoFileActionAndroidTv: WakoFileAction[] = [
+  'wako-video-player',
+  'play-vlc',
+  'open-with',
+  'add-to-playlist',
+];
+
 export const WakoDefaultFileActionIos: WakoFileAction[] = ['share-url', 'play-vlc', 'play-kodi', 'cast'];
 
 export const WakoDefaultFileActionAndroid: WakoFileAction[] = [
@@ -66,6 +78,8 @@ export const WakoDefaultFileActionAndroid: WakoFileAction[] = [
   'cast',
   'add-to-playlist',
 ];
+
+export const WakoFileActionAndroidTvDefault: WakoFileAction[] = ['wako-video-player', 'play-vlc', 'open-with'];
 
 export interface WakoFileActionButton {
   action?: WakoFileAction;
@@ -84,6 +98,7 @@ export class WakoFileActionSettings {
 
 export class WakoFileActionService {
   private settingsStorageCategory = 'wako_file_action_settings';
+  private settingsStorageCategoryTv = 'wako_file_action_settings_tv';
 
   constructor(
     private platform: Platform,
@@ -92,14 +107,31 @@ export class WakoFileActionService {
     private toastService: WakoToastService,
     private playlistService: PlaylistService,
   ) {
-    addIcons({ cloudDownloadOutline, copyOutline, listOutline, openOutline, shareOutline, closeOutline });
+    if (WakoGlobal.isTvLayout) {
+      this.settingsStorageCategory = this.settingsStorageCategoryTv;
+    }
+    addIcons({
+      cloudDownloadOutline,
+      copyOutline,
+      listOutline,
+      openOutline,
+      shareOutline,
+      closeOutline,
+      playCircleOutline,
+    });
   }
 
   getAllActions() {
+    if (WakoGlobal.isTvLayout) {
+      return WakoFileActionAndroidTv;
+    }
     return this.platform.is('ios') ? WakoFileActionIos : WakoFileActionAndroid;
   }
 
   getDefaultActions() {
+    if (WakoGlobal.isTvLayout) {
+      return WakoFileActionAndroidTvDefault;
+    }
     return this.platform.is('ios') ? WakoDefaultFileActionIos : WakoDefaultFileActionAndroid;
   }
 
@@ -294,6 +326,11 @@ export class WakoFileActionService {
           fileActionButton.icon = 'list-outline';
           fileActionButton.handler = () => this.addToPlaylist(link, title, openMedia, posterUrl, playlistId);
           break;
+
+        case 'wako-video-player':
+          fileActionButton.icon = 'play-circle-outline';
+          fileActionButton.handler = () => this.openInWakoVideoPlayer(link, seekTo, openMedia);
+          break;
       }
 
       buttons.push(fileActionButton);
@@ -403,6 +440,10 @@ export class WakoFileActionService {
         }
       },
     );
+  }
+
+  async openInWakoVideoPlayer(link: string, seekTo?: number, openMedia?: OpenMedia) {
+    return WakoVideoPlayerService.openVideoUrl({ videoUrl: link, startAt: seekTo, openMedia });
   }
 
   share(link: string, title: string) {
