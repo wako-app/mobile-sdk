@@ -48,12 +48,14 @@ export class WakoVideoPlayerService {
       let handled = false;
 
       switch (e.key) {
+        case 'MediaFastForward':
         case 'ArrowRight': {
           handled = true;
           const currentTime = await CapacitorVideoPlayer.getCurrentTime({ playerId });
           CapacitorVideoPlayer.setCurrentTime({ seektime: currentTime.value + 10, playerId });
           break;
         }
+        case 'MediaRewind':
         case 'ArrowLeft': {
           handled = true;
           const currentTime = await CapacitorVideoPlayer.getCurrentTime({ playerId });
@@ -65,6 +67,31 @@ export class WakoVideoPlayerService {
         case 'Enter':
           handled = true;
           CapacitorVideoPlayer.showController();
+          break;
+
+        case 'MediaPlay':
+          handled = true;
+          CapacitorVideoPlayer.play({ playerId });
+          break;
+
+        case 'MediaPause':
+          handled = true;
+          CapacitorVideoPlayer.pause({ playerId });
+          break;
+
+        case 'MediaStop':
+          handled = true;
+          CapacitorVideoPlayer.exitPlayer();
+          break;
+
+        case 'MediaPlayPause':
+          handled = true;
+          const isPlaying = await CapacitorVideoPlayer.isPlaying({ playerId });
+          if (isPlaying.value) {
+            CapacitorVideoPlayer.pause({ playerId });
+          } else {
+            CapacitorVideoPlayer.play({ playerId });
+          }
           break;
       }
 
