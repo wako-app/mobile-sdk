@@ -1,6 +1,6 @@
 {
   "name": "@wako-app/mobile-sdk",
-  "version": "10.0.5",
+  "version": "10.0.6",
   "description": "wako's mobile SDK",
   "main": "dist/public_api.js",
   "typings": "dist/public_api.d.ts",
