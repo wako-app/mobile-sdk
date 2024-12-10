@@ -40,6 +40,7 @@ export declare type WakoFileAction =
   | 'wako-video-player';
 
 export const WakoFileActionIos: WakoFileAction[] = [
+  'wako-video-player',
   'copy-url',
   'download-vlc',
   'play-nplayer',
@@ -52,6 +53,7 @@ export const WakoFileActionIos: WakoFileAction[] = [
 ];
 
 export const WakoFileActionAndroid: WakoFileAction[] = [
+  'wako-video-player',
   'copy-url',
   'share-url',
   'open-with',
@@ -68,9 +70,16 @@ export const WakoFileActionAndroidTv: WakoFileAction[] = [
   'add-to-playlist',
 ];
 
-export const WakoDefaultFileActionIos: WakoFileAction[] = ['share-url', 'play-vlc', 'play-kodi', 'cast'];
+export const WakoDefaultFileActionIos: WakoFileAction[] = [
+  'wako-video-player',
+  'share-url',
+  'play-vlc',
+  'play-kodi',
+  'cast',
+];
 
 export const WakoDefaultFileActionAndroid: WakoFileAction[] = [
+  'wako-video-player',
   'share-url',
   'open-with',
   'play-vlc',
