@@ -13,7 +13,7 @@ export class WakoStorage {
       config.version = 1;
     }
     if (config.driverOrder === undefined) {
-      config.driverOrder = [cordovaSQLiteDriver._driver, Drivers.IndexedDB];
+      config.driverOrder = [Drivers.IndexedDB];
     }
     this.config = config;
   }
