@@ -19,7 +19,7 @@ import { WakoShare } from '../share/wako-share.service';
 import { PlaylistVideo } from './../../entities/playlist-video';
 import { PlaylistService } from './../playlist/playlist.service';
 import { BrowserService } from './browser.service';
-import { CAST_IMAGE, INFUSE_IMAGE, KODI_IMAGE, NPLAYER_IMAGE, VLC_IMAGE } from './images-base64';
+import { CAST_IMAGE, INFUSE_IMAGE, KODI_IMAGE, NPLAYER_IMAGE, OUTPLAYER_IMAGE, VLC_IMAGE } from './images-base64';
 import { WakoSettingsService } from './wako-settings.service';
 import { WakoToastService } from './wako-toast.service';
 
@@ -37,7 +37,8 @@ export declare type WakoFileAction =
   | 'play-infuse'
   | 'cast'
   | 'add-to-playlist'
-  | 'wako-video-player';
+  | 'wako-video-player'
+  | 'play-outplayer';
 
 export const WakoFileActionIos: WakoFileAction[] = [
   'copy-url',
@@ -49,6 +50,7 @@ export const WakoFileActionIos: WakoFileAction[] = [
   'play-kodi',
   'cast',
   'add-to-playlist',
+  'play-outplayer',
 ];
 
 export const WakoFileActionAndroid: WakoFileAction[] = [
@@ -312,6 +314,10 @@ export class WakoFileActionService {
           fileActionButton.handler = () => this.playInInfuse(link);
           break;
 
+        case 'play-outplayer':
+          fileActionButton.handler = () => this.playInOutplayer(link);
+          break;
+
         case 'cast':
           const firstLink = settings.useOriginUrlForChromecast ? link : streamLink;
           const fallBackLink = settings.useOriginUrlForChromecast ? streamLink : link;
@@ -360,6 +366,8 @@ export class WakoFileActionService {
         return INFUSE_IMAGE;
       case 'cast':
         return CAST_IMAGE;
+      case 'play-outplayer':
+        return OUTPLAYER_IMAGE;
     }
   }
 
@@ -415,6 +423,14 @@ export class WakoFileActionService {
       return;
     }
     const url = `infuse://x-callback-url/play?url=${encodeURIComponent(link)}`;
+    await BrowserService.open(url, false);
+  }
+
+  async playInOutplayer(link: string) {
+    if (!this.platform.is('ios')) {
+      return;
+    }
+    const url = `outplayer://${link}`;
     await BrowserService.open(url, false);
   }
 
