@@ -102,7 +102,7 @@ export abstract class WakoBaseHttpService {
     timeoutMs = 10000,
     byPassCors = null,
     timeToWaitOnTooManyRequest?: number,
-    timeToWaitBetweenEachRequest?: number
+    timeToWaitBetweenEachRequest?: number,
   ): Observable<T> {
     if (!httpRequest.headers) {
       httpRequest.headers = this.getHeaders();
@@ -145,7 +145,7 @@ export abstract class WakoBaseHttpService {
 
           const queueObs = WakoHttpService.request(
             httpRequest,
-            byPassCors !== null ? byPassCors : this.byPassCors
+            byPassCors !== null ? byPassCors : this.byPassCors,
           ).pipe(
             timeout(timeoutMs),
             map((response: WakoHttpResponse) => {
@@ -166,7 +166,7 @@ export abstract class WakoBaseHttpService {
                   err.status,
                   httpRequest.url,
                   'but cache exists, returns it',
-                  cacheObject.data
+                  cacheObject.data,
                 );
                 return of(cacheObject.data);
               }
@@ -189,7 +189,7 @@ export abstract class WakoBaseHttpService {
 
                   setTimeout(() => {
                     console.log('RUN NEXT', domain);
-                    this.runNextIfQueueOk(domain, timeToWaitBetweenEachRequest);
+                    this.runNext(domain, timeToWaitBetweenEachRequest);
                   }, timeToWaitOnTooManyRequest);
                 } else {
                   console.log('Queue is disabled do nothing');
@@ -199,7 +199,7 @@ export abstract class WakoBaseHttpService {
               }
 
               return throwError(err);
-            })
+            }),
           );
 
           if (this.queueEnabled) {
@@ -216,7 +216,7 @@ export abstract class WakoBaseHttpService {
               (err) => {
                 this.observableRequests.delete(observableKey);
                 observer.error(err);
-              }
+              },
             );
           }
         });
@@ -228,7 +228,7 @@ export abstract class WakoBaseHttpService {
           }
 
           return this.unHandleError(err);
-        })
+        }),
       );
 
       this.observableRequests.set(observableKey, obs);
@@ -248,7 +248,7 @@ export abstract class WakoBaseHttpService {
     observer: Observer<any>,
     observable: Observable<any>,
     url: string,
-    addFirst = false
+    addFirst = false,
   ) {
     const queue = this.getQueueItemsByDomain(domain);
     const item = {
@@ -285,7 +285,7 @@ export abstract class WakoBaseHttpService {
             setTimeout(() => {
               this.runNext(domain, timeToWaitBetweenEachRequest);
             }, timeToWaitBetweenEachRequest);
-          })
+          }),
         )
         .subscribe(
           (result) => {
@@ -294,7 +294,7 @@ export abstract class WakoBaseHttpService {
           },
           (err) => {
             data.observer.error(err);
-          }
+          },
         );
     }
   }
@@ -306,7 +306,7 @@ export abstract class WakoBaseHttpService {
         method: 'GET',
       },
       cacheTime,
-      timeoutMs
+      timeoutMs,
     );
   }
 
@@ -318,7 +318,7 @@ export abstract class WakoBaseHttpService {
         body: body,
       },
       cacheTime,
-      timeoutMs
+      timeoutMs,
     );
   }
 
@@ -330,7 +330,7 @@ export abstract class WakoBaseHttpService {
         body: body,
       },
       cacheTime,
-      timeoutMs
+      timeoutMs,
     );
   }
 
@@ -342,7 +342,7 @@ export abstract class WakoBaseHttpService {
         body: body,
       },
       cacheTime,
-      timeoutMs
+      timeoutMs,
     );
   }
 }
