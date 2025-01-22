@@ -133,7 +133,7 @@ export class KodiAppService {
       catchError(() => {
         return of(null);
       }),
-      map((data) => data === 'pong')
+      map((data) => data === 'pong'),
     );
   }
 
@@ -152,7 +152,7 @@ export class KodiAppService {
   static async getCurrentHost() {
     const hosts = await this.getHosts();
     const hostIndex = +(await WakoSettingsService.getByCategory<KodiHostStructure>(
-      this.storageCategoryCurrentHostIndex
+      this.storageCategoryCurrentHostIndex,
     ));
 
     let currentHost = hosts[0];
@@ -306,7 +306,7 @@ export class KodiAppService {
         }
 
         return of(true);
-      })
+      }),
     );
   }
 
@@ -353,7 +353,7 @@ export class KodiAppService {
         EventService.emit(EventCategory.kodi, EventName.open);
 
         return true;
-      })
+      }),
     );
   }
 
@@ -362,14 +362,14 @@ export class KodiAppService {
     openMedia?: OpenMedia,
     openKodiRemote = true,
     params?: KodiOpenParams,
-    prependOpenMediaToUrl = true
+    prependOpenMediaToUrl = true,
   ) {
     return this.open(
       {
         file: prependOpenMediaToUrl ? this.prependOpenMediaToUrl(url, openMedia) : url,
       },
       openMedia,
-      openKodiRemote
+      openKodiRemote,
     ).pipe(
       switchMap((res) => {
         if (typeof params === 'undefined') {
@@ -389,8 +389,8 @@ export class KodiAppService {
                   KodiPlayerSetSubtitleForm.submit(
                     playerId,
                     params.enableSubtitle || false,
-                    params.subtitleIndex || null
-                  )
+                    params.subtitleIndex || null,
+                  ),
                 );
 
                 if (params.audioStreamIndex) {
@@ -398,11 +398,11 @@ export class KodiAppService {
                 }
 
                 return obss.length > 0 ? concat(...obss) : of(true);
-              })
+              }),
             );
-          })
+          }),
         );
-      })
+      }),
     );
   }
 
@@ -461,7 +461,7 @@ export class KodiAppService {
         }
 
         return of(true);
-      })
+      }),
     );
   }
 
@@ -520,9 +520,18 @@ export class KodiAppService {
         }
 
         return this.openUrl(item.url, item.openMedia, true, params);
-      })
+      }),
     );
   }
+}
+
+export interface OpenMediaVideoTrack {
+  id?: string;
+  language?: string;
+}
+export interface OpenMediaVideoData {
+  audioTrack?: OpenMediaVideoTrack;
+  subtitleTrack?: OpenMediaVideoTrack;
 }
 
 export interface KodiOpenParams {
@@ -539,6 +548,7 @@ export interface OpenMedia {
   episodeNumber?: number;
   videoUrl?: string;
   nextVideoUrls?: string[];
+  videoData?: OpenMediaVideoData;
 }
 
 export interface KodiConnected {

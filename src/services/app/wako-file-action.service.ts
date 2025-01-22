@@ -337,7 +337,7 @@ export class WakoFileActionService {
 
         case 'wako-video-player':
           fileActionButton.icon = 'play-circle-outline';
-          fileActionButton.handler = () => this.openInWakoVideoPlayer(link, seekTo, openMedia);
+          fileActionButton.handler = () => this.openInWakoVideoPlayer({ link, seekTo, openMedia });
           break;
       }
 
@@ -460,7 +460,7 @@ export class WakoFileActionService {
     );
   }
 
-  async openInWakoVideoPlayer(link: string, seekTo?: number, openMedia?: OpenMedia) {
+  async openInWakoVideoPlayer({ link, seekTo, openMedia }: { link: string; seekTo?: number; openMedia?: OpenMedia }) {
     return WakoVideoPlayerService.openVideoUrl({ videoUrl: link, startAt: seekTo, openMedia });
   }
 

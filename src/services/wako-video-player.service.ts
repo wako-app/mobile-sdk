@@ -8,9 +8,27 @@ export interface VideoPlayerExitEvent {
   openMedia?: OpenMedia;
 }
 
+export interface VideoPlayerTrackInfo {
+  id: string;
+  language: string;
+  label: string;
+  codecs?: string;
+  bitrate?: number;
+  channelCount?: number;
+  sampleRate?: number;
+  containerMimeType?: string;
+  sampleMimeType?: string;
+}
+export interface VideoPlayerTracksChangedInfo {
+  fromPlayerId: string;
+  audioTrack?: VideoPlayerTrackInfo;
+  subtitleTrack?: VideoPlayerTrackInfo;
+}
+
 export interface VideoPlayerEvents {
   onExit: Promise<VideoPlayerExitEvent>;
   onCurrentTime: Observable<{ currentTime: number; totalDuration: number }>;
+  onTracksChanged: Observable<VideoPlayerTracksChangedInfo>;
   playerId: string;
 }
 
