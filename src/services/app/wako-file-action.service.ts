@@ -83,7 +83,7 @@ export const WakoDefaultFileActionAndroid: WakoFileAction[] = [
   'add-to-playlist',
 ];
 
-export const WakoFileActionAndroidTvDefault: WakoFileAction[] = ['wako-video-player', 'play-vlc', 'open-with'];
+export const WakoFileActionAndroidTvDefault: WakoFileAction[] = ['wako-video-player'];
 
 export interface WakoFileActionButton {
   action?: WakoFileAction;
