@@ -541,7 +541,7 @@ export interface KodiOpenParams {
   audioStreamIndex?: number;
 }
 
-export interface OpenMedia {
+export interface OpenMedia<TCustomData = Record<string, any>> {
   movieIds?: BaseIds;
   showIds?: BaseIds;
   seasonNumber?: number;
@@ -549,6 +549,7 @@ export interface OpenMedia {
   videoUrl?: string;
   nextVideoUrls?: string[];
   videoData?: OpenMediaVideoData;
+  customData?: TCustomData;
 }
 
 export interface KodiConnected {
