@@ -299,7 +299,7 @@ export class WakoFileActionService {
           break;
 
         case 'play-vlc':
-          fileActionButton.handler = () => this.playInVlc(link);
+          fileActionButton.handler = () => this.playInVlc(link, title, seekTo, openMedia);
           break;
 
         case 'play-nplayer':
@@ -393,12 +393,12 @@ export class WakoFileActionService {
       .subscribe();
   }
 
-  async playInVlc(link: string) {
+  async playInVlc(link: string, title?: string, seekTo?: number, openMedia?: OpenMedia) {
     if (this.platform.is('ios')) {
-      const url = `vlc-x-callback://x-callback-url/stream?url=${link}`;
+      const url = `vlc-x-callback://x-callback-url/stream?url=${link}&title=${title}&seekTo=${seekTo}`;
       await BrowserService.open(url, false);
     } else {
-      const url = `vlc://${link}`;
+      const url = `vlc://${link}?title=${title}&seekTo=${seekTo}`;
       await BrowserService.open(url, false);
     }
   }
