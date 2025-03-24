@@ -7,24 +7,23 @@ import {
   copyOutline,
   listOutline,
   openOutline,
-  shareOutline,
   playCircleOutline,
+  shareOutline,
 } from 'ionicons/icons';
 import { NEVER } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { getEpisodeCode } from '../../tools/utils.tool';
-import { ChromecastService } from '../chromecast/chromecast.service';
 import { KodiAppService, KodiOpenParams, OpenMedia } from '../kodi/services/kodi-app.service';
 import { WakoShare } from '../share/wako-share.service';
 import { PlaylistVideo } from './../../entities/playlist-video';
 import { PlaylistService } from './../playlist/playlist.service';
-import { BrowserService } from './browser.service';
 import { CAST_IMAGE, INFUSE_IMAGE, KODI_IMAGE, NPLAYER_IMAGE, OUTPLAYER_IMAGE, VLC_IMAGE } from './images-base64';
 import { WakoSettingsService } from './wako-settings.service';
 import { WakoToastService } from './wako-toast.service';
 
-import { WakoVideoPlayerService } from '../wako-video-player.service';
+import { WakoPlayWithService } from '../play-with/wako-play-with.service';
 import { WakoGlobal } from '../wako-global';
+import { WakoVideoPlayerService } from '../wako-video-player.service';
 
 export declare type WakoFileAction =
   | 'play-kodi'
@@ -290,20 +289,41 @@ export class WakoFileActionService {
 
         case 'open-with':
           fileActionButton.icon = 'open-outline';
-          fileActionButton.handler = () => this.openWith(link, title);
+          fileActionButton.handler = () =>
+            WakoPlayWithService.openWith({
+              url: link,
+              title,
+              seekTo,
+            });
           break;
 
         case 'download-vlc':
           fileActionButton.icon = 'cloud-download-outline';
-          fileActionButton.handler = () => this.downloadWithVlc(link);
+          fileActionButton.handler = () =>
+            WakoPlayWithService.downloadWithVlc({
+              isIos: this.platform.is('ios'),
+              link,
+            });
           break;
 
         case 'play-vlc':
-          fileActionButton.handler = () => this.playInVlc(link, title, seekTo, openMedia);
+          fileActionButton.handler = () =>
+            WakoPlayWithService.playInVlc({
+              isIos: this.platform.is('ios'),
+              link,
+              title,
+              seekTo,
+              openMedia,
+              posterUrl,
+            });
           break;
 
         case 'play-nplayer':
-          fileActionButton.handler = () => this.playInNplayer(link);
+          fileActionButton.handler = () =>
+            WakoPlayWithService.playInNplayer({
+              isIos: this.platform.is('ios'),
+              link,
+            });
           break;
 
         case 'play-kodi':
@@ -311,23 +331,38 @@ export class WakoFileActionService {
           break;
 
         case 'play-infuse':
-          fileActionButton.handler = () => this.playInInfuse(link);
+          fileActionButton.handler = () =>
+            WakoPlayWithService.playInInfuse({
+              isIos: this.platform.is('ios'),
+              link,
+            });
           break;
 
         case 'play-outplayer':
-          fileActionButton.handler = () => this.playInOutplayer(link);
+          fileActionButton.handler = () =>
+            WakoPlayWithService.playInOutplayer({
+              isIos: this.platform.is('ios'),
+              link,
+            });
           break;
 
         case 'cast':
           const firstLink = settings.useOriginUrlForChromecast ? link : streamLink;
           const fallBackLink = settings.useOriginUrlForChromecast ? streamLink : link;
 
-          fileActionButton.handler = () => this.cast(firstLink, title, posterUrl, seekTo, openMedia, fallBackLink);
+          fileActionButton.handler = () =>
+            WakoPlayWithService.cast({ link: firstLink, title, posterUrl, seekTo, openMedia, fallBackLink });
           break;
 
         case 'share-url':
           fileActionButton.icon = 'share-outline';
-          fileActionButton.handler = () => this.share(link, title);
+          fileActionButton.handler = () =>
+            WakoShare.share({
+              dialogTitle: title,
+              text: title,
+              url: link,
+              title,
+            });
           break;
 
         case 'add-to-playlist':
@@ -337,7 +372,8 @@ export class WakoFileActionService {
 
         case 'wako-video-player':
           fileActionButton.icon = 'play-circle-outline';
-          fileActionButton.handler = () => this.openInWakoVideoPlayer({ link, seekTo, openMedia });
+          fileActionButton.handler = () =>
+            WakoVideoPlayerService.openVideoUrl({ videoUrl: link, startAt: seekTo, openMedia });
           break;
       }
 
@@ -391,105 +427,6 @@ export class WakoFileActionService {
         }),
       )
       .subscribe();
-  }
-
-  async playInVlc(link: string, title?: string, seekTo?: number, openMedia?: OpenMedia) {
-    if (this.platform.is('ios')) {
-      const url = `vlc-x-callback://x-callback-url/stream?url=${link}&title=${title}&seekTo=${seekTo}`;
-      await BrowserService.open(url, false);
-    } else {
-      const url = `vlc://${link}?title=${title}&seekTo=${seekTo}`;
-      await BrowserService.open(url, false);
-    }
-  }
-
-  async downloadWithVlc(link: string) {
-    if (this.platform.is('ios')) {
-      const url = `vlc-x-callback://x-callback-url/download?url=${link}`;
-      await BrowserService.open(url, false);
-    }
-  }
-
-  async playInNplayer(link: string) {
-    if (!this.platform.is('ios')) {
-      return;
-    }
-    const url = `nplayer-${link}`;
-    await BrowserService.open(url, false);
-  }
-
-  async playInInfuse(link: string) {
-    if (!this.platform.is('ios')) {
-      return;
-    }
-    const url = `infuse://x-callback-url/play?url=${encodeURIComponent(link)}`;
-    await BrowserService.open(url, false);
-  }
-
-  async playInOutplayer(link: string) {
-    if (!this.platform.is('ios')) {
-      return;
-    }
-    const url = `outplayer://${link}`;
-    await BrowserService.open(url, false);
-  }
-
-  async cast(
-    link: string,
-    title?: string,
-    posterUrl?: string,
-    seekTo?: number,
-    openMedia?: OpenMedia,
-    fallBackLink?: string,
-  ) {
-    ChromecastService.openUrl(title || '', link, posterUrl || null, openMedia).subscribe(
-      () => {
-        if (seekTo > 0 && ChromecastService.media) {
-          ChromecastService.seek(seekTo);
-        }
-      },
-      (err) => {
-        if (fallBackLink) {
-          ChromecastService.openUrl(title, fallBackLink, posterUrl || null, openMedia).subscribe(() => {
-            if (seekTo > 0 && ChromecastService.media) {
-              ChromecastService.seek(seekTo);
-            }
-          });
-        }
-      },
-    );
-  }
-
-  async openInWakoVideoPlayer({ link, seekTo, openMedia }: { link: string; seekTo?: number; openMedia?: OpenMedia }) {
-    return WakoVideoPlayerService.openVideoUrl({ videoUrl: link, startAt: seekTo, openMedia });
-  }
-
-  share(link: string, title: string) {
-    WakoShare.share({
-      dialogTitle: title,
-      text: title,
-      url: link,
-      title,
-    });
-  }
-
-  openWith(url: string, title: string) {
-    if (window['plugins'] && window['plugins'].intentShim) {
-      const intentShim: any = window['plugins'].intentShim;
-
-      intentShim.startActivity(
-        {
-          action: window['plugins'].intentShim.ACTION_VIEW,
-          type: 'video/*',
-          url: url,
-          extras: {
-            title: title,
-          },
-        },
-        () => console.log('intentShim success'),
-        (err) => console.log('intentShim err', err),
-      );
-    }
   }
 
   async addToPlaylist(url: string, title: string, openMedia?: OpenMedia, poster?: string, playlistId?: string) {

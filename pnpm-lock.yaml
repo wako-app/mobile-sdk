@@ -32,20 +32,20 @@ importers:
         specifier: ^18.2.11
         version: 18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1)
       '@capacitor/app-launcher':
-        specifier: ^6.0.2
-        version: 6.0.2(@capacitor/core@6.1.2)
+        specifier: ^7.0.0
+        version: 7.0.0(@capacitor/core@7.1.0)
       '@capacitor/browser':
-        specifier: ^6.0.2
-        version: 6.0.2(@capacitor/core@6.1.2)
+        specifier: ^7.0.0
+        version: 7.0.0(@capacitor/core@7.1.0)
       '@capacitor/core':
-        specifier: ^6.1.2
-        version: 6.1.2
+        specifier: ^7.1.0
+        version: 7.1.0
       '@capacitor/share':
-        specifier: ^6.0.2
-        version: 6.0.2(@capacitor/core@6.1.2)
+        specifier: ^7.0.0
+        version: 7.0.0(@capacitor/core@7.1.0)
       '@ionic/angular':
-        specifier: ^8.4.1
-        version: 8.4.1(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/forms@18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(@angular/router@18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(rxjs@7.8.1)(zone.js@0.14.10)
+        specifier: ^8.5.1
+        version: 8.5.1(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/forms@18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(@angular/router@18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(rxjs@7.8.1)(zone.js@0.14.10)
       '@ionic/storage-angular':
         specifier: ^4.0.0
         version: 4.0.0(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1)
@@ -54,7 +54,7 @@ importers:
         version: 15.0.0(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1)
       capacitor-video-player:
         specifier: github:wako-app/capacitor-video-player
-        version: https://codeload.github.com/wako-app/capacitor-video-player/tar.gz/93aa4a8f68e5b1dbadc11a7389f84f60a0a20672(@capacitor/core@6.1.2)(hls.js@1.5.17)
+        version: https://codeload.github.com/wako-app/capacitor-video-player/tar.gz/93aa4a8f68e5b1dbadc11a7389f84f60a0a20672(@capacitor/core@7.1.0)(hls.js@1.5.17)
       cordova-sqlite-storage:
         specifier: ^6.1.0
         version: 6.1.0
@@ -114,17 +114,17 @@ importers:
         specifier: ^9.3.2
         version: 9.3.2
       husky:
-        specifier: ^9.1.4
-        version: 9.1.4
+        specifier: ^9.1.7
+        version: 9.1.7
       karma:
         specifier: ~6.4.1
         version: 6.4.1
       prettier:
-        specifier: ^3.3.3
-        version: 3.3.3
+        specifier: ^3.5.3
+        version: 3.5.3
       pretty-quick:
-        specifier: ^4.0.0
-        version: 4.0.0(prettier@3.3.3)
+        specifier: ^4.1.1
+        version: 4.1.1(prettier@3.5.3)
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@20.2.3)(typescript@5.5.4)
@@ -1078,27 +1078,27 @@ packages:
       { integrity: sha512-YTnYtra7W9e6/oAZEHj0bJehPRUlLH9/fbpT5LfB0NhQXyALCRkRs3zH9v07IYhkgpqX6Z78FnuccZr/l4Fs4Q== }
     engines: { node: '>=6.9.0' }
 
-  '@capacitor/app-launcher@6.0.2':
+  '@capacitor/app-launcher@7.0.0':
     resolution:
-      { integrity: sha512-g1hLHTnb7240HYcM28TBN3HbCkc6HV4242sj5/xxQyQ4N4R61DfJLpZDLtp0Wq9WkLlFCJ2B2svHU7ZvA3Tvgg== }
+      { integrity: sha512-S7L1xG8BGRlKESBLDrj1vF+AIP02yWkP0kP5m0lVMSvc8q7aCZdgKcIy2XQNJg2C4oCX4sQdtHvjP5X0JVC3PA== }
     peerDependencies:
-      '@capacitor/core': ^6.0.0
+      '@capacitor/core': '>=7.0.0'
 
-  '@capacitor/browser@6.0.2':
+  '@capacitor/browser@7.0.0':
     resolution:
-      { integrity: sha512-mJjdKbpdCAaaDVZD/vjzpJJxL1VvwsGTcEGn+4PpCQyPu3+yNQO7vgjwBV7ZYS6+mZIKeYn5swWq0BFuAcDqFg== }
+      { integrity: sha512-wM2gclpulyOAvno9HDKI1X6Vxd0qXviO1zFeY5dplsNSR4tm6k6BtVGW7jEqUbQCFXbnDmhKLQgLr39JUwjzcA== }
     peerDependencies:
-      '@capacitor/core': ^6.0.0
+      '@capacitor/core': '>=7.0.0'
 
-  '@capacitor/core@6.1.2':
+  '@capacitor/core@7.1.0':
     resolution:
-      { integrity: sha512-xFy1/4qLFLp5WCIzIhtwUuVNNoz36+V7/BzHmLqgVJcvotc4MMjswW/TshnPQaLLujEOaLkA4h8ZJ0uoK3ImGg== }
+      { integrity: sha512-I0a4C8gux5sx+HDamJjCiWHEWRdJU3hejwURFOSwJjUmAMkfkrm4hOsI0dgd+S0eCkKKKYKz9WNm7DAIvhm2zw== }
 
-  '@capacitor/share@6.0.2':
+  '@capacitor/share@7.0.0':
     resolution:
-      { integrity: sha512-qQIeyjzFB1VgP4ojyNg2O98TCigDWLKZ5melVMSVeDO0YQov5OeammsVgaCGSzvYBPSgyOwX41QvcDWG4yHN1A== }
+      { integrity: sha512-UL/czyt0nr4/O88pFfBK0wP0VNxaQvAmOAtD95Q0srgtJJAdkS0bIvCuhIeVxEeyWG2TyylzzQ2rI/4nexwCyQ== }
     peerDependencies:
-      '@capacitor/core': ^6.0.0
+      '@capacitor/core': '>=7.0.0'
 
   '@colors/colors@1.5.0':
     resolution:
@@ -1581,9 +1581,9 @@ packages:
       { integrity: sha512-w9qFkumYDCNyDZmNQjf/n6qQuvQ4dMC3BJesY4oF+yr0CxR5vxujflAVeIcS6U336uzi9GM0kAfZlLrZ9UTkpA== }
     engines: { node: '>=18' }
 
-  '@ionic/angular@8.4.1':
+  '@ionic/angular@8.5.1':
     resolution:
-      { integrity: sha512-22ghlHeIJjHDizns/huYp1sQ3Y9qYyUY9hEueIB0e8jsNhCOwhRijMIoOCZ/sfMKTbNaKX7EJ25NpVetF7mZXQ== }
+      { integrity: sha512-MS6Avg/LvExI+GRZzdcTfOi735xW+sc05JUdlJh7QwTVN2+5IVj1bbm/7ULbM3trGef+nM9gW/sEm6T50O+4ag== }
     peerDependencies:
       '@angular/core': '>=16.0.0'
       '@angular/forms': '>=16.0.0'
@@ -1591,9 +1591,9 @@ packages:
       rxjs: '>=7.5.0'
       zone.js: '>=0.13.0'
 
-  '@ionic/core@8.4.1':
+  '@ionic/core@8.5.1':
     resolution:
-      { integrity: sha512-D5xpw5TF2wldpAWE0rHq3L+5T79EjR6d++QFpprjp+q+cFjjhOnfGD+2k7gLlWepAod9LUUigeL0JF02C2wgRQ== }
+      { integrity: sha512-XsI1ImfgO87EdNucfmKESPN4djLyclNTwzU2AY7xSzSonKjTAft6qrK1/qU2ys829bmbM7/4+tHFb0UOnt3uHQ== }
 
   '@ionic/storage-angular@4.0.0':
     resolution:
@@ -3630,9 +3630,9 @@ packages:
       { integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw== }
     engines: { node: '>=10.17.0' }
 
-  husky@9.1.4:
+  husky@9.1.7:
     resolution:
-      { integrity: sha512-bho94YyReb4JV7LYWRWxZ/xr6TtOTt8cMfmQ39MQYJ7f/YE268s3GdghGwi+y4zAeqewE5zYLvuhV0M0ijsDEA== }
+      { integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA== }
     engines: { node: '>=18' }
     hasBin: true
 
@@ -3667,14 +3667,14 @@ packages:
       { integrity: sha512-t7sv42WkwFkyKbivUCglsQW5YWMskWtbEf4MNKX5u/CCWHKSPzN4FtBQGsQZgCLbxOzpVlcbWVK5KB3auIOjSw== }
     engines: { node: ^14.17.0 || ^16.13.0 || >=18.0.0 }
 
-  ignore@5.3.0:
-    resolution:
-      { integrity: sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg== }
-    engines: { node: '>= 4' }
-
   ignore@5.3.2:
     resolution:
       { integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g== }
+    engines: { node: '>= 4' }
+
+  ignore@7.0.3:
+    resolution:
+      { integrity: sha512-bAH5jbK/F3T3Jls4I0SO1hmPR0dKU0a7+SY6n1yzRtG54FLO8d6w/nxLFX2Nb7dBu6cCWXPaAME6cYqFUMmuCA== }
     engines: { node: '>= 4' }
 
   image-size@0.5.5:
@@ -4629,14 +4629,6 @@ packages:
       { integrity: sha512-5HviZNaZcfqP95rwpv+1HDgUamezbqdSYTyzjTvwtJSnIH+3vnbmWsItli8OFEndS984VT55M3jduxZbX351gg== }
     engines: { node: '>=12' }
 
-  picocolors@1.0.0:
-    resolution:
-      { integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ== }
-
-  picocolors@1.0.1:
-    resolution:
-      { integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew== }
-
   picocolors@1.1.1:
     resolution:
       { integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA== }
@@ -4645,11 +4637,6 @@ packages:
     resolution:
       { integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA== }
     engines: { node: '>=8.6' }
-
-  picomatch@3.0.1:
-    resolution:
-      { integrity: sha512-I3EurrIQMlRc9IaAZnqRR044Phh2DXY+55o7uJ0V+hYZAcQYSuFWsc9q5PvyDHUSCe1Qxn/iBz+78s86zWnGag== }
-    engines: { node: '>=10' }
 
   picomatch@4.0.2:
     resolution:
@@ -4740,15 +4727,15 @@ packages:
       { integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g== }
     engines: { node: '>= 0.8.0' }
 
-  prettier@3.3.3:
+  prettier@3.5.3:
     resolution:
-      { integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew== }
+      { integrity: sha512-QQtaxnoDJeAkDvDKWCLiwIXkTgRhwYDEQCghU9Z6q03iyek/rxRh/2lC3HB7P8sWT2xC/y5JDctPLBIGzHKbhw== }
     engines: { node: '>=14' }
     hasBin: true
 
-  pretty-quick@4.0.0:
+  pretty-quick@4.1.1:
     resolution:
-      { integrity: sha512-M+2MmeufXb/M7Xw3Afh1gxcYpj+sK0AxEfnfF958ktFeAyi5MsKY5brymVURQLgPLV1QaF5P4pb2oFJ54H3yzQ== }
+      { integrity: sha512-9Ud0l/CspNTmyIdYac9X7Inb3o8fuUsw+1zJFvCGn+at0t1UwUcUdo2RSZ41gcmfLv1fxgWQxWEfItR7CBwugg== }
     engines: { node: '>=14' }
     hasBin: true
     peerDependencies:
@@ -5363,6 +5350,10 @@ packages:
     resolution:
       { integrity: sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA== }
 
+  tinyexec@0.3.2:
+    resolution:
+      { integrity: sha512-KQQR9yN7R5+OSwaK0XQoj22pwHoTlgYqmUscPYoknOoWCWfj/5/ABTMRi69FrKU5ffPVh5QcFikpWJI/P1ocHA== }
+
   tmp@0.0.33:
     resolution:
       { integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw== }
@@ -5426,13 +5417,13 @@ packages:
     resolution:
       { integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg== }
 
-  tslib@2.6.2:
-    resolution:
-      { integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q== }
-
   tslib@2.6.3:
     resolution:
       { integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ== }
+
+  tslib@2.8.1:
+    resolution:
+      { integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w== }
 
   tuf-js@2.2.0:
     resolution:
@@ -6143,7 +6134,7 @@ snapshots:
   '@babel/code-frame@7.24.7':
     dependencies:
       '@babel/highlight': 7.24.7
-      picocolors: 1.0.1
+      picocolors: 1.1.1
 
   '@babel/compat-data@7.25.2': {}
 
@@ -6314,7 +6305,7 @@ snapshots:
       '@babel/helper-validator-identifier': 7.24.7
       chalk: 2.4.2
       js-tokens: 4.0.0
-      picocolors: 1.0.1
+      picocolors: 1.1.1
 
   '@babel/parser@7.25.3':
     dependencies:
@@ -6917,21 +6908,21 @@ snapshots:
       '@babel/helper-validator-identifier': 7.24.7
       to-fast-properties: 2.0.0
 
-  '@capacitor/app-launcher@6.0.2(@capacitor/core@6.1.2)':
+  '@capacitor/app-launcher@7.0.0(@capacitor/core@7.1.0)':
     dependencies:
-      '@capacitor/core': 6.1.2
+      '@capacitor/core': 7.1.0
 
-  '@capacitor/browser@6.0.2(@capacitor/core@6.1.2)':
+  '@capacitor/browser@7.0.0(@capacitor/core@7.1.0)':
     dependencies:
-      '@capacitor/core': 6.1.2
+      '@capacitor/core': 7.1.0
 
-  '@capacitor/core@6.1.2':
+  '@capacitor/core@7.1.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
-  '@capacitor/share@6.0.2(@capacitor/core@6.1.2)':
+  '@capacitor/share@7.0.0(@capacitor/core@7.1.0)':
     dependencies:
-      '@capacitor/core': 6.1.2
+      '@capacitor/core': 7.1.0
 
   '@colors/colors@1.5.0': {}
 
@@ -7231,19 +7222,19 @@ snapshots:
     dependencies:
       mute-stream: 1.0.0
 
-  '@ionic/angular@8.4.1(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/forms@18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(@angular/router@18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(rxjs@7.8.1)(zone.js@0.14.10)':
+  '@ionic/angular@8.5.1(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/forms@18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(@angular/router@18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1))(rxjs@7.8.1)(zone.js@0.14.10)':
     dependencies:
       '@angular/core': 18.2.13(rxjs@7.8.1)(zone.js@0.14.10)
       '@angular/forms': 18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1)
       '@angular/router': 18.2.13(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(@angular/platform-browser@18.2.13(@angular/animations@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10)))(rxjs@7.8.1)
-      '@ionic/core': 8.4.1
+      '@ionic/core': 8.5.1
       ionicons: 7.4.0
       jsonc-parser: 3.3.1
       rxjs: 7.8.1
       tslib: 2.6.3
       zone.js: 0.14.10
 
-  '@ionic/core@8.4.1':
+  '@ionic/core@8.5.1':
     dependencies:
       '@stencil/core': 4.20.0
       ionicons: 7.4.0
@@ -7952,7 +7943,7 @@ snapshots:
       caniuse-lite: 1.0.30001651
       fraction.js: 4.3.7
       normalize-range: 0.1.2
-      picocolors: 1.0.1
+      picocolors: 1.1.1
       postcss: 8.4.41
       postcss-value-parser: 4.2.0
 
@@ -8115,9 +8106,9 @@ snapshots:
 
   caniuse-lite@1.0.30001651: {}
 
-  capacitor-video-player@https://codeload.github.com/wako-app/capacitor-video-player/tar.gz/93aa4a8f68e5b1dbadc11a7389f84f60a0a20672(@capacitor/core@6.1.2)(hls.js@1.5.17):
+  capacitor-video-player@https://codeload.github.com/wako-app/capacitor-video-player/tar.gz/93aa4a8f68e5b1dbadc11a7389f84f60a0a20672(@capacitor/core@7.1.0)(hls.js@1.5.17):
     dependencies:
-      '@capacitor/core': 6.1.2
+      '@capacitor/core': 7.1.0
       hls.js: 1.5.17
 
   chalk@2.4.2:
@@ -8891,7 +8882,7 @@ snapshots:
     dependencies:
       '@sindresorhus/merge-streams': 2.3.0
       fast-glob: 3.3.2
-      ignore: 5.3.0
+      ignore: 5.3.2
       path-type: 5.0.0
       slash: 5.1.0
       unicorn-magic: 0.1.0
@@ -9004,7 +8995,7 @@ snapshots:
 
   human-signals@2.1.0: {}
 
-  husky@9.1.4: {}
+  husky@9.1.7: {}
 
   hyperdyperid@1.2.0: {}
 
@@ -9026,9 +9017,9 @@ snapshots:
     dependencies:
       minimatch: 9.0.3
 
-  ignore@5.3.0: {}
-
   ignore@5.3.2: {}
+
+  ignore@7.0.3: {}
 
   image-size@0.5.5:
     optional: true
@@ -9235,7 +9226,7 @@ snapshots:
 
   launch-editor@2.8.1:
     dependencies:
-      picocolors: 1.0.1
+      picocolors: 1.1.1
       shell-quote: 1.8.1
 
   less-loader@12.2.0(less@4.2.0)(webpack@5.94.0(esbuild@0.23.0)):
@@ -9815,15 +9806,9 @@ snapshots:
 
   path-type@5.0.0: {}
 
-  picocolors@1.0.0: {}
-
-  picocolors@1.0.1: {}
-
   picocolors@1.1.1: {}
 
   picomatch@2.3.1: {}
-
-  picomatch@3.0.1: {}
 
   picomatch@4.0.2: {}
 
@@ -9882,7 +9867,7 @@ snapshots:
   postcss@8.4.41:
     dependencies:
       nanoid: 3.3.7
-      picocolors: 1.0.1
+      picocolors: 1.1.1
       source-map-js: 1.2.0
 
   postcss@8.4.49:
@@ -9893,18 +9878,18 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier@3.3.3: {}
+  prettier@3.5.3: {}
 
-  pretty-quick@4.0.0(prettier@3.3.3):
+  pretty-quick@4.1.1(prettier@3.5.3):
     dependencies:
-      execa: 5.1.1
       find-up: 5.0.0
-      ignore: 5.3.0
+      ignore: 7.0.3
       mri: 1.2.0
-      picocolors: 1.0.0
-      picomatch: 3.0.1
-      prettier: 3.3.3
-      tslib: 2.6.2
+      picocolors: 1.1.1
+      picomatch: 4.0.2
+      prettier: 3.5.3
+      tinyexec: 0.3.2
+      tslib: 2.8.1
 
   proc-log@3.0.0: {}
 
@@ -10462,6 +10447,8 @@ snapshots:
 
   thunky@1.1.0: {}
 
+  tinyexec@0.3.2: {}
+
   tmp@0.0.33:
     dependencies:
       os-tmpdir: 1.0.2
@@ -10508,9 +10495,9 @@ snapshots:
 
   tslib@2.5.0: {}
 
-  tslib@2.6.2: {}
-
   tslib@2.6.3: {}
+
+  tslib@2.8.1: {}
 
   tuf-js@2.2.0:
     dependencies:
@@ -10568,7 +10555,7 @@ snapshots:
     dependencies:
       browserslist: 4.23.3
       escalade: 3.1.2
-      picocolors: 1.0.1
+      picocolors: 1.1.1
 
   uri-js@4.4.1:
     dependencies:
