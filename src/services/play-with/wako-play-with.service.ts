@@ -19,10 +19,10 @@ export class WakoPlayWithService {
     posterUrl?: string;
   }) {
     if (isIos) {
-      const url = `vlc-x-callback://x-callback-url/stream?url=${link}&title=${title}&seekTo=${seekTo}`;
+      const url = `vlc-x-callback://x-callback-url/stream?url=${link}`;
       await BrowserService.open(url, false);
     } else {
-      const url = `vlc://${link}?title=${title}&seekTo=${seekTo}`;
+      const url = `vlc://${link}`;
       await BrowserService.open(url, false);
     }
   }
@@ -43,7 +43,7 @@ export class WakoPlayWithService {
 
   static async playInInfuse({ isIos, link }: { isIos: boolean; link: string }) {
     if (isIos) {
-      const url = `infuse://x-callback-url/play?url=${link}`;
+      const url = `infuse://x-callback-url/play?url=${encodeURIComponent(link)}`;
       await BrowserService.open(url, false);
     }
   }
