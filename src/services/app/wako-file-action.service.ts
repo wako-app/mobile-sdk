@@ -366,7 +366,13 @@ export class WakoFileActionService {
         case 'wako-video-player':
           fileActionButton.icon = 'play-circle-outline';
           fileActionButton.handler = () =>
-            WakoVideoPlayerService.openVideoUrl({ videoUrl: link, startAt: seekTo, openMedia });
+            WakoVideoPlayerService.openVideoUrl({
+              videoUrl: link,
+              startAt: seekTo,
+              openMedia,
+              title,
+              poster: posterUrl,
+            });
           break;
       }
 
