@@ -52,9 +52,6 @@ importers:
       '@ngx-translate/core':
         specifier: ^15.0.0
         version: 15.0.0(@angular/common@18.2.13(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1))(@angular/core@18.2.13(rxjs@7.8.1)(zone.js@0.14.10))(rxjs@7.8.1)
-      capacitor-video-player:
-        specifier: github:wako-app/capacitor-video-player
-        version: https://codeload.github.com/wako-app/capacitor-video-player/tar.gz/93aa4a8f68e5b1dbadc11a7389f84f60a0a20672(@capacitor/core@7.1.0)(hls.js@1.5.17)
       cordova-sqlite-storage:
         specifier: ^6.1.0
         version: 6.1.0
@@ -2662,17 +2659,6 @@ packages:
     resolution:
       { integrity: sha512-9Cf+Xv1jJNe1xPZLGuUXLNkE1BoDkqRqYyFJ9TDYSqhduqA4hu4oR9HluGoWYQC/aj8WHjsGVV+bwkh0+tegRg== }
 
-  capacitor-video-player@https://codeload.github.com/wako-app/capacitor-video-player/tar.gz/93aa4a8f68e5b1dbadc11a7389f84f60a0a20672:
-    resolution:
-      {
-        tarball: https://codeload.github.com/wako-app/capacitor-video-player/tar.gz/93aa4a8f68e5b1dbadc11a7389f84f60a0a20672,
-      }
-    version: 6.0.0
-    engines: { node: '>=16.0.0' }
-    peerDependencies:
-      '@capacitor/core': ^6.0.0
-      hls.js: ^1.4.0
-
   chalk@2.4.2:
     resolution:
       { integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ== }
@@ -3551,10 +3537,6 @@ packages:
     resolution:
       { integrity: sha512-vUptKVTpIJhcczKBbgnS+RtcuYMB8+oNzPK2/Hp3hanz8JmpATdmmgLgSaadVREkDm+e2giHwY3ZRkyjSIDDFA== }
     engines: { node: '>= 0.4' }
-
-  hls.js@1.5.17:
-    resolution:
-      { integrity: sha512-wA66nnYFvQa1o4DO/BFgLNRKnBTVXpNeldGRBJ2Y0SvFtdwvFKCbqa9zhHoZLoxHhZ+jYsj3aIBkWQQCPNOhMw== }
 
   hosted-git-info@7.0.1:
     resolution:
@@ -8106,11 +8088,6 @@ snapshots:
 
   caniuse-lite@1.0.30001651: {}
 
-  capacitor-video-player@https://codeload.github.com/wako-app/capacitor-video-player/tar.gz/93aa4a8f68e5b1dbadc11a7389f84f60a0a20672(@capacitor/core@7.1.0)(hls.js@1.5.17):
-    dependencies:
-      '@capacitor/core': 7.1.0
-      hls.js: 1.5.17
-
   chalk@2.4.2:
     dependencies:
       ansi-styles: 3.2.1
@@ -8904,8 +8881,6 @@ snapshots:
   hasown@2.0.0:
     dependencies:
       function-bind: 1.1.2
-
-  hls.js@1.5.17: {}
 
   hosted-git-info@7.0.1:
     dependencies:
