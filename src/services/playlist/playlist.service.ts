@@ -39,7 +39,7 @@ export class PlaylistService {
     return playlists;
   }
 
-  private async setPlaylistsInStorage(playlists: Playlist[]) {
+  async setPlaylistsInStorage(playlists: Playlist[]) {
     return await this.storage.set(this.storageKey, playlists);
   }
 
