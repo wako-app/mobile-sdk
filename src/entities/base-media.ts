@@ -25,6 +25,7 @@ export interface BaseIds {
   imdb?: string;
   tmdb?: number;
   tvdb?: string;
+  customId?: string;
 }
 
 export interface BaseCommonMedia {
